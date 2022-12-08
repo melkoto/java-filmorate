@@ -1,9 +1,10 @@
 package ru.yandex.practicum.model;
 
-import jakarta.validation.constraints.FutureOrPresent;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -14,7 +15,8 @@ public class Film {
     @NotEmpty
     private String name;
     private String description;
-    @FutureOrPresent
+    @JsonFormat(pattern = "dd.MM.yyyy")
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private LocalDate releaseDate;
     private int duration;
 }
