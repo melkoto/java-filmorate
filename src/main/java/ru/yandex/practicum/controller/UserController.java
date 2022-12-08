@@ -36,7 +36,7 @@ public class UserController {
     public User updateUser(@Valid @RequestBody User user, @RequestParam(value = "id", required = true) int id) {
 
         if (!users.containsKey(id)) {
-            throw new DoesntExistException("User with id = " + id + "does not exist.");
+            throw new DoesntExistException("User with id = " + id + " does not exist.");
         }
 
         users.put(id, user);
