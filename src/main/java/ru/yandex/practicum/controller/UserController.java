@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.exceptions.AlreadyExistsException;
 import ru.yandex.practicum.exceptions.DoesntExistException;
+import ru.yandex.practicum.exceptions.InvalidLoginException;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.model.User;
 
@@ -24,6 +25,10 @@ public class UserController {
     public User createUser(@Valid @RequestBody User user) {
         int id = user.getId();
 
+        if (user.getLogin().split(" ").length > 1) {
+            throw new InvalidLoginException("Login cant have empty space");
+        }
+
         if (users.containsKey(id)) {
             throw new AlreadyExistsException("User with id = " + id + " already exists.");
         }
@@ -34,6 +39,10 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user, @RequestParam(value = "id", required = true) int id) {
+
+        if (user.getLogin().split(" ").length > 1) {
+            throw new InvalidLoginException("Login cant have empty space");
+        }
 
         if (!users.containsKey(id)) {
             throw new DoesntExistException("User with id = " + id + " does not exist.");
