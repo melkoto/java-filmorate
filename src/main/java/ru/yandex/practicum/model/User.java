@@ -16,11 +16,10 @@ public class User {
     private int id;
     @Email(message = "Use valid email")
     private String email;
+    private String name;
     @NotEmpty
     @NotNull
     private String login;
-    @NotNull
-    private String name;
     @Past
     @JsonFormat(pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
