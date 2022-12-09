@@ -1,6 +1,7 @@
 package ru.yandex.practicum.controller;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.exceptions.AlreadyExistsException;
 import ru.yandex.practicum.exceptions.DoesntExistException;
@@ -12,6 +13,7 @@ import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("films")
 public class FilmController {
@@ -37,6 +39,7 @@ public class FilmController {
         }
 
         films.put(id, film);
+        log.info("Film with id = {} is added to data", id);
         return film;
     }
 
@@ -53,6 +56,7 @@ public class FilmController {
         }
 
         films.put(id, film);
+        log.info("Film with id = {} is updated", id);
         return film;
     }
 }
