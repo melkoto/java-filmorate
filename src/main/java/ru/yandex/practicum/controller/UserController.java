@@ -1,7 +1,9 @@
 package ru.yandex.practicum.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.exceptions.ValidationException;
 import ru.yandex.practicum.model.User;
@@ -32,12 +34,22 @@ public class UserController {
             user.setName(user.getLogin());
         }
 
-        if (user.getLogin().split(" ").length > 1) {
-            throw new ValidationException("Login cant have empty space");
-        }
+        try {
+            if (user.getLogin().split(" ").length > 1) {
+                throw new ValidationException();
+            }
 
-        if (users.containsKey(id)) {
-            throw new BadRequestException("User with id = " + id + " already exists.");
+            if (users.containsKey(id)) {
+                throw new BadRequestException();
+            }
+        } catch (ValidationException ve) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_ACCEPTABLE, "Login cant have empty space", ve
+            );
+        } catch (BadRequestException bre) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "User with id = " + id + " already exists.", bre
+            );
         }
 
         user.setId(id);
