@@ -2,9 +2,8 @@ package ru.yandex.practicum.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.exceptions.AlreadyExistsException;
-import ru.yandex.practicum.exceptions.DoesntExistException;
-import ru.yandex.practicum.exceptions.InvalidLoginException;
+import ru.yandex.practicum.exceptions.BadRequestException;
+import ru.yandex.practicum.exceptions.ValidationException;
 import ru.yandex.practicum.model.User;
 
 import javax.validation.Valid;
@@ -20,10 +19,6 @@ public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
     private int id = 1;
 
-    private int getId() {
-        return id++;
-    }
-
     @GetMapping
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
@@ -38,11 +33,11 @@ public class UserController {
         }
 
         if (user.getLogin().split(" ").length > 1) {
-            throw new InvalidLoginException("Login cant have empty space");
+            throw new ValidationException("Login cant have empty space");
         }
 
         if (users.containsKey(id)) {
-            throw new AlreadyExistsException("User with id = " + id + " already exists.");
+            throw new BadRequestException("User with id = " + id + " already exists.");
         }
 
         user.setId(id);
@@ -57,16 +52,21 @@ public class UserController {
 
         if (user.getLogin().split(" ").length > 1) {
             log.error("Login cant have empty space");
-            throw new InvalidLoginException("Login cant have empty space");
+            throw new ValidationException("Login cant have empty space");
         }
 
         if (!users.containsKey(id)) {
             log.error("User with id = {} does not exist.", id);
-            throw new DoesntExistException("User with id = " + id + " does not exist.");
+            throw new BadRequestException("User with id = " + id + " does not exist.");
+
         }
 
         users.put(id, user);
         log.info("User with id = {} is updated", id);
         return user;
+    }
+
+    private int getId() {
+        return id++;
     }
 }

@@ -2,9 +2,8 @@ package ru.yandex.practicum.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.exceptions.AlreadyExistsException;
-import ru.yandex.practicum.exceptions.DoesntExistException;
-import ru.yandex.practicum.exceptions.InvalidDateInputException;
+import ru.yandex.practicum.exceptions.BadRequestException;
+import ru.yandex.practicum.exceptions.ValidationException;
 import ru.yandex.practicum.model.Film;
 
 import javax.validation.Valid;
@@ -23,10 +22,6 @@ public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
     private int id = 1;
 
-    private int getId() {
-        return id++;
-    }
-
     @GetMapping
     public List<Film> getFilms() {
         return new ArrayList<>(films.values());
@@ -38,11 +33,11 @@ public class FilmController {
         LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
 
         if (releaseDate.isBefore(EARLIEST_RELEASE_DATE)) {
-            throw new InvalidDateInputException("Release date must be after 28 December 1895");
+            throw new ValidationException("Release date must be after 28 December 1895");
         }
 
         if (films.containsKey(id)) {
-            throw new AlreadyExistsException("Film with id = " + id + " already exists.");
+            throw new BadRequestException("Film with id = " + id + " already exists.");
         }
 
         film.setId(id);
@@ -57,15 +52,19 @@ public class FilmController {
         LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
 
         if (releaseDate.isBefore(EARLIEST_RELEASE_DATE)) {
-            throw new InvalidDateInputException("Release date must be after 28 December 1895");
+            throw new ValidationException("Release date must be after 28 December 1895");
         }
 
         if (!films.containsKey(id)) {
-            throw new DoesntExistException("Film with id = " + id + " does not exist.");
+            throw new BadRequestException("Film with id = " + id + " does not exist.");
         }
 
         films.put(id, film);
         log.info("Film with id = {} is updated", id);
         return film;
+    }
+
+    private int getId() {
+        return id++;
     }
 }
