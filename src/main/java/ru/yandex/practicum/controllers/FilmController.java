@@ -44,7 +44,7 @@ public class FilmController {
             }
         } catch (ValidationException ve) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "Release date must be after 28 December 1895", ve
+                    HttpStatus.BAD_REQUEST, "Release date must be after 28 December 1895", ve
             );
         } catch (BadRequestException bre) {
             throw new ResponseStatusException(
