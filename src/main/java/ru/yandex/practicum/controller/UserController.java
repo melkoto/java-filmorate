@@ -33,14 +33,15 @@ public class UserController {
     public User createUser(@Valid @RequestBody User user) {
         int id = getId();
 
+        if (user.getName() == null) {
+            user.setName("");
+        }
+
         if (user.getLogin().split(" ").length > 1) {
-            // Зачем логировать, если есть exception?
-            // log.error("Login cant have empty space");
             throw new InvalidLoginException("Login cant have empty space");
         }
 
         if (users.containsKey(id)) {
-            // log.error("User with id = {} already exists.", id);
             throw new AlreadyExistsException("User with id = " + id + " already exists.");
         }
 
