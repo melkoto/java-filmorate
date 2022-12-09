@@ -17,8 +17,9 @@ public class User {
     @Email(message = "Use valid email")
     private String email;
     @NotEmpty
+    @NotNull
     private String login;
-    @NotEmpty
+    @NotNull
     private String name;
     @Past
     @JsonFormat(pattern = "yyyy-MM-dd")
