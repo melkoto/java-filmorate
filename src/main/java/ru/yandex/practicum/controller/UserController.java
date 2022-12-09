@@ -34,7 +34,7 @@ public class UserController {
         int id = getId();
 
         if (user.getName() == null) {
-            user.setName("");
+            user.setName(user.getLogin());
         }
 
         if (user.getLogin().split(" ").length > 1) {
