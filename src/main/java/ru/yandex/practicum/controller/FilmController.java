@@ -10,7 +10,9 @@ import ru.yandex.practicum.model.Film;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -26,8 +28,8 @@ public class FilmController {
     }
 
     @GetMapping
-    public Map<Integer, Film> getFilms() {
-        return films;
+    public List<Film> getFilms() {
+        return new ArrayList<>(films.values());
     }
 
     @PostMapping

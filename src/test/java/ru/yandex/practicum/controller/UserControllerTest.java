@@ -46,6 +46,6 @@ class UserControllerTest {
     void updateUser() {
         userController.createUser(user1);
         userController.updateUser(user2);
-        Assertions.assertEquals(userController.getUsers().get(1), user2);
+        Assertions.assertEquals(userController.getUsers().get(0), user2);
     }
 }

@@ -8,7 +8,9 @@ import ru.yandex.practicum.exceptions.InvalidLoginException;
 import ru.yandex.practicum.model.User;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -23,8 +25,8 @@ public class UserController {
     }
 
     @GetMapping
-    public Map<Integer, User> getUsers() {
-        return users;
+    public List<User> getUsers() {
+        return new ArrayList<>(users.values());
     }
 
     @PostMapping

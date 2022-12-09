@@ -46,6 +46,6 @@ class FilmControllerTest {
     void updateFilm() {
         filmController.addFilm(film);
         filmController.updateFilm(film1);
-        Assertions.assertEquals(filmController.getFilms().get(1), film1);
+        Assertions.assertEquals(filmController.getFilms().get(0), film1);
     }
 }
