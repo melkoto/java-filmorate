@@ -1,7 +1,9 @@
 package ru.yandex.practicum.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,14 +14,13 @@ import java.time.LocalDate;
 public class Film {
     @NotNull
     private int id;
-    @NotEmpty
-    @NotBlank(message = "Name cant be empty")
+    @NotEmpty(message = "Name can't be empty")
     private String name;
     @Length(max = 200, message = "Only 200 symbols are allowed")
     private String description;
-    @JsonFormat(pattern = "dd.MM.yyyy")
-    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
-    @Positive(message = "The value must be positive")
+    @Positive(message = "Duration must be positive")
     private int duration;
 }
