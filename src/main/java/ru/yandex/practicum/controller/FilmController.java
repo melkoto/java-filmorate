@@ -6,7 +6,6 @@ import ru.yandex.practicum.exceptions.AlreadyExistsException;
 import ru.yandex.practicum.exceptions.DoesntExistException;
 import ru.yandex.practicum.exceptions.InvalidDateInputException;
 import ru.yandex.practicum.model.Film;
-import ru.yandex.practicum.utils.IdCreator;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -20,6 +19,11 @@ import java.util.Map;
 public class FilmController {
     private static final LocalDate EARLIEST_RELEASE_DATE = LocalDate.of(1895, Month.DECEMBER, 28);
     private final Map<Integer, Film> films = new HashMap<>();
+    private int id = 1;
+
+    private int getId() {
+        return id++;
+    }
 
     @GetMapping
     public Map<Integer, Film> getFilms() {
@@ -28,7 +32,7 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        int id = IdCreator.getId();
+        int id = getId();
         LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
 
         if (releaseDate.isBefore(EARLIEST_RELEASE_DATE)) {

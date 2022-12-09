@@ -24,7 +24,7 @@ class FilmControllerTest {
         film.setDuration(6000);
 
         film1 = new Film();
-        film1.setId(2);
+        film1.setId(1);
         film1.setName("Death Note");
         film1.setDescription("Anime");
         film1.setReleaseDate(LocalDate.of(2010, Month.JULY, 11));
@@ -46,6 +46,6 @@ class FilmControllerTest {
     void updateFilm() {
         filmController.addFilm(film);
         filmController.updateFilm(film1);
-        Assertions.assertEquals(filmController.getFilms().get(2), film1);
+        Assertions.assertEquals(filmController.getFilms().get(1), film1);
     }
 }

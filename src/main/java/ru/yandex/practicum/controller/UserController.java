@@ -6,7 +6,6 @@ import ru.yandex.practicum.exceptions.AlreadyExistsException;
 import ru.yandex.practicum.exceptions.DoesntExistException;
 import ru.yandex.practicum.exceptions.InvalidLoginException;
 import ru.yandex.practicum.model.User;
-import ru.yandex.practicum.utils.IdCreator;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -17,6 +16,11 @@ import java.util.Map;
 @RequestMapping("users")
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
+    private int id = 1;
+
+    private int getId() {
+        return id++;
+    }
 
     @GetMapping
     public Map<Integer, User> getUsers() {
@@ -25,7 +29,7 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        int id = IdCreator.getId();
+        int id = getId();
 
         if (user.getLogin().split(" ").length > 1) {
             // Зачем логировать, если есть exception?
