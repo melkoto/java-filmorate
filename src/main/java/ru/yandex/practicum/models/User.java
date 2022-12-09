@@ -24,8 +24,8 @@ public class User {
     @NotNull
     private String login;
 
-    @Past
     @JsonFormat(pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Past(message = "Input valid birthdate")
     private LocalDate birthday;
 }
