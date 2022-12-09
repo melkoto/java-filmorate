@@ -1,9 +1,9 @@
-package ru.yandex.practicum.controller;
+package ru.yandex.practicum.controllers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.model.User;
+import ru.yandex.practicum.models.User;
 
 import java.time.LocalDate;
 import java.time.Month;

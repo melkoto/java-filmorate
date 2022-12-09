@@ -1,4 +1,4 @@
-package ru.yandex.practicum.model;
+package ru.yandex.practicum.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -14,12 +14,16 @@ import java.time.LocalDate;
 public class User {
     @NotNull
     private int id;
+
     @Email(message = "Use valid email")
     private String email;
+
     private String name;
+
     @NotEmpty
     @NotNull
     private String login;
+
     @Past
     @JsonFormat(pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

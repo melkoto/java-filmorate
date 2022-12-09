@@ -1,4 +1,4 @@
-package ru.yandex.practicum.model;
+package ru.yandex.practicum.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -14,13 +14,17 @@ import java.time.LocalDate;
 public class Film {
     @NotNull
     private int id;
+
     @NotEmpty(message = "Name can't be empty")
     private String name;
+
     @Length(max = 200, message = "Only 200 symbols are allowed")
     private String description;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
+
     @Positive(message = "Duration must be positive")
     private int duration;
 }

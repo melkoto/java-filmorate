@@ -1,4 +1,4 @@
-package ru.yandex.practicum.controller;
+package ru.yandex.practicum.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.exceptions.ValidationException;
-import ru.yandex.practicum.model.Film;
+import ru.yandex.practicum.models.Film;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
