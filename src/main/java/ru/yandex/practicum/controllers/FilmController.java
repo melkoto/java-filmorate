@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.exceptions.BadRequestException;
-import ru.yandex.practicum.exceptions.ValidationException;
+import ru.yandex.practicum.exceptions.ConflictException;
+import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 
 import javax.validation.Valid;
@@ -36,19 +37,19 @@ public class FilmController {
 
         try {
             if (releaseDate.isBefore(EARLIEST_RELEASE_DATE)) {
-                throw new ValidationException();
+                throw new BadRequestException();
             }
 
             if (films.containsKey(id)) {
-                throw new BadRequestException();
+                throw new ConflictException();
             }
-        } catch (ValidationException ve) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Release date must be after 28 December 1895", ve
-            );
         } catch (BadRequestException bre) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "Film with id = " + id + " already exists.", bre
+                    HttpStatus.BAD_REQUEST, "Release date must be after 28 December 1895", bre
+            );
+        } catch (ConflictException ce) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Film with id = " + id + " already exists.", ce
             );
         }
 
@@ -64,11 +65,11 @@ public class FilmController {
         LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
 
         if (releaseDate.isBefore(EARLIEST_RELEASE_DATE)) {
-            throw new ValidationException("Release date must be after 28 December 1895");
+            throw new BadRequestException("Release date must be after 28 December 1895");
         }
 
         if (!films.containsKey(id)) {
-            throw new BadRequestException("Film with id = " + id + " does not exist.");
+            throw new NotFoundException("Film with id = " + id + " does not exist.");
         }
 
         films.put(id, film);

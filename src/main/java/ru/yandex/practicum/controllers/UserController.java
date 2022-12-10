@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.exceptions.BadRequestException;
-import ru.yandex.practicum.exceptions.ValidationException;
+import ru.yandex.practicum.exceptions.ConflictException;
+import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.User;
 
 import javax.validation.Valid;
@@ -35,20 +36,20 @@ public class UserController {
         }
 
         try {
-            if (user.getLogin().split(" ").length > 1) {
-                throw new ValidationException();
+            if (users.containsKey(id)) {
+                throw new ConflictException();
             }
 
-            if (users.containsKey(id)) {
+            if (user.getLogin().split(" ").length > 1) {
                 throw new BadRequestException();
             }
-        } catch (ValidationException ve) {
+        } catch (ConflictException ce) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "Login cant have empty space", ve
+                    HttpStatus.CONFLICT, "User with id = " + id + " already exists.", ce
             );
         } catch (BadRequestException bre) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "User with id = " + id + " already exists.", bre
+                    HttpStatus.BAD_REQUEST, "Login cant have empty space", bre
             );
         }
 
@@ -64,7 +65,7 @@ public class UserController {
 
         if (user.getLogin().split(" ").length > 1) {
             log.error("Login cant have empty space");
-            throw new ValidationException("Login cant have empty space");
+            throw new BadRequestException("Login cant have empty space");
         }
 
         if (!users.containsKey(id)) {

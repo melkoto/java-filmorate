@@ -1,6 +1,6 @@
 package ru.yandex.practicum.exceptions;
 
-public class BadRequestException extends RuntimeException {
+public class BadRequestException  extends RuntimeException{
     public BadRequestException() {
         super();
     }
