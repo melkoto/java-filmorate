@@ -70,7 +70,7 @@ public class UserController {
 
         if (!users.containsKey(id)) {
             log.error("User with id = {} does not exist.", id);
-            throw new BadRequestException("User with id = " + id + " does not exist.");
+            throw new NotFoundException("User with id = " + id + " does not exist.");
 
         }
 
