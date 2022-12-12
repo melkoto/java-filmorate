@@ -1,11 +1,8 @@
 package ru.yandex.practicum.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.exceptions.BadRequestException;
-import ru.yandex.practicum.exceptions.ConflictException;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 
@@ -35,23 +32,10 @@ public class FilmController {
         int id = getId();
         LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
 
-        try {
-            if (releaseDate.isBefore(EARLIEST_RELEASE_DATE)) {
-                throw new BadRequestException();
-            }
-
-            if (films.containsKey(id)) {
-                throw new ConflictException();
-            }
-        } catch (BadRequestException bre) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Release date must be after 28 December 1895", bre
-            );
-        } catch (ConflictException ce) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Film with id = " + id + " already exists.", ce
-            );
+        if (releaseDate.isBefore(EARLIEST_RELEASE_DATE)) {
+            throw new BadRequestException("Release date must be after 28 December 1895");
         }
+
 
         film.setId(id);
         films.put(id, film);
