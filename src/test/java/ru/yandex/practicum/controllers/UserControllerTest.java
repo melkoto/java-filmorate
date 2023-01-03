@@ -15,7 +15,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        userController = new UserController();
+        // userController = new UserController(userStorage, userService);
         user1 = new User();
         user1.setId(1);
         user1.setEmail("test@test.com");

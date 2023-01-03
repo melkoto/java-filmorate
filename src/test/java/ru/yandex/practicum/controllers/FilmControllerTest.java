@@ -15,7 +15,7 @@ class FilmControllerTest {
 
     @BeforeEach
     void setUp() {
-        filmController = new FilmController();
+        // filmController = new FilmController(filmStorage, filmService);
         film = new Film();
         film.setId(1);
         film.setName("Naruto");
