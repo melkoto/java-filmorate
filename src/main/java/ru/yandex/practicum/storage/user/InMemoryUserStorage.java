@@ -6,9 +6,11 @@ import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -41,7 +43,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getUsers() {
-        return users.values().stream().toList();
+        return new ArrayList<>(users.values());
     }
 
     @Override

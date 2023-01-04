@@ -9,9 +9,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 public class User {
@@ -43,6 +45,6 @@ public class User {
     }
 
     public List<Long> getFriends() {
-        return friends.stream().toList();
+        return new ArrayList<>(friends);
     }
 }

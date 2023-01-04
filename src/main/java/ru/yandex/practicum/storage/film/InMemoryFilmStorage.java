@@ -8,9 +8,11 @@ import ru.yandex.practicum.models.Film;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -45,7 +47,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getFilms() {
-        return films.values().stream().toList();
+        return new ArrayList<>(films.values());
     }
 
     @Override
@@ -90,6 +92,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public List<Film> getPopularFilms(int count) {
 
-        return films.values().stream().sorted((film1, film2) -> film2.getLikes().size() - film1.getLikes().size()).limit(count).toList();
+        return films.values().stream().sorted((film1, film2) -> film2.getLikes().size() - film1.getLikes().size()).limit(count).collect(Collectors.toList());
     }
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -67,7 +68,7 @@ public class UserService {
         List<Long> common = Stream.concat(
                 userStorage.users.get(userId).getFriends().stream(),
                 userStorage.users.get(anotherUserId).getFriends().stream()
-        ).toList();
+        ).collect(Collectors.toList());
 
         for (Long friendId : common) {
             if (!friends.add(friendId)) {
@@ -81,6 +82,6 @@ public class UserService {
     }
 
     private List<User> getUsersByIds(List<Long> ids) {
-        return ids.stream().map(userStorage.users::get).toList();
+        return ids.stream().map(userStorage.users::get).collect(Collectors.toList());
     }
 }
