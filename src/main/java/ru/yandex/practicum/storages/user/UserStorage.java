@@ -1,4 +1,4 @@
-package ru.yandex.practicum.storage.user;
+package ru.yandex.practicum.storages.user;
 
 import ru.yandex.practicum.models.User;
 

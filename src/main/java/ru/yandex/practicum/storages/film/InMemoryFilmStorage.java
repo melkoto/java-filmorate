@@ -1,4 +1,4 @@
-package ru.yandex.practicum.storage.film;
+package ru.yandex.practicum.storages.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class InMemoryFilmStorage implements FilmStorage {
     private static final LocalDate EARLIEST_RELEASE_DATE = LocalDate.of(1895, Month.DECEMBER, 28);
 
-    public final Map<Long, Film> films = new HashMap<>();
+    private final Map<Long, Film> films = new HashMap<>();
 
     private long id = 1;
 
@@ -43,6 +43,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("Фильм с id = {} добавлен в базу.", id);
 
         return film;
+    }
+
+    public boolean hasId(Long id) {
+        return films.containsKey(id);
     }
 
     @Override

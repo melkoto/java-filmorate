@@ -1,9 +1,9 @@
-package ru.yandex.practicum.service.film;
+package ru.yandex.practicum.services.film;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
-import ru.yandex.practicum.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.storages.film.InMemoryFilmStorage;
 
 import java.util.List;
 
@@ -16,27 +16,43 @@ public class FilmService {
     }
 
     public void likeFilm(long filmId, long userId) {
-        if (!filmStorage.films.containsKey(filmId)) {
+        if (!filmStorage.hasId(filmId)) {
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
         }
 
-        if (!filmStorage.films.containsKey(userId)) {
+        if (!filmStorage.hasId(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        filmStorage.films.get(filmId).setLikes(userId);
+        filmStorage.getFilmById(filmId).setLikes(userId);
     }
 
     public void removeLikes(long filmId, long userId) {
-        if (!filmStorage.films.containsKey(filmId)) {
+        if (!filmStorage.hasId(filmId)) {
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
         }
 
-        if (!filmStorage.films.containsKey(userId)) {
+        if (!filmStorage.hasId(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        filmStorage.films.get(filmId).removeLikes(userId);
+        filmStorage.getFilmById(filmId).removeLikes(userId);
+    }
+
+    public Film addFilm(Film film) {
+        return filmStorage.addFilm(film);
+    }
+
+    public List<Film> getFilms() {
+        return filmStorage.getFilms();
+    }
+
+    public Film getFilmById(Long id) {
+        return filmStorage.getFilmById(id);
+    }
+
+    public Film updateFilm(Film film) {
+        return filmStorage.updateFilm(film);
     }
 
     public List<Film> getPopularFilms(int count) {

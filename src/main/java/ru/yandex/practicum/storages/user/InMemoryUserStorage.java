@@ -1,4 +1,4 @@
-package ru.yandex.practicum.storage.user;
+package ru.yandex.practicum.storages.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    public final Map<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
     private long id = 1;
 
     private long getId() {
@@ -39,6 +38,10 @@ public class InMemoryUserStorage implements UserStorage {
 
         log.info("Пользователь {} добавлен в базу", user.getName());
         return user;
+    }
+
+    public boolean hasId(Long id) {
+        return users.containsKey(id);
     }
 
     @Override

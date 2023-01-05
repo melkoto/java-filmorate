@@ -1,9 +1,9 @@
-package ru.yandex.practicum.service.user;
+package ru.yandex.practicum.services.user;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.User;
-import ru.yandex.practicum.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.storages.user.InMemoryUserStorage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,52 +22,52 @@ public class UserService {
 
 
     public void addFriend(long userId, long friendId) {
-        if (!userStorage.users.containsKey(userId)) {
+        if (!userStorage.hasId(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        if (!userStorage.users.containsKey(friendId)) {
+        if (!userStorage.hasId(friendId)) {
             throw new NotFoundException("Пользователь с id = " + friendId + " не найден");
         }
 
-        userStorage.users.get(userId).addFriend(friendId);
-        userStorage.users.get(friendId).addFriend(userId);
+        userStorage.getUserById(userId).addFriend(friendId);
+        userStorage.getUserById(friendId).addFriend(userId);
     }
 
     public void removeFriend(long userId, long friendId) {
-        if (!userStorage.users.containsKey(userId)) {
+        if (!userStorage.hasId(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        if (!userStorage.users.containsKey(friendId)) {
+        if (!userStorage.hasId(friendId)) {
             throw new NotFoundException("Пользователь с id = " + friendId + " не найден");
         }
 
-        userStorage.users.get(userId).removeFriend(friendId);
+        userStorage.getUserById(userId).removeFriend(friendId);
     }
 
     public List<User> getFriends(long userId) {
-        if (!userStorage.users.containsKey(userId)) {
+        if (!userStorage.hasId(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        return getUsersByIds(userStorage.users.get(userId).getFriends());
+        return getUsersByIds(userStorage.getUserById(userId).getFriends());
     }
 
     public List<User> getCommonFriends(long userId, long anotherUserId) {
-        if (!userStorage.users.containsKey(userId)) {
+        if (!userStorage.hasId(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        if (!userStorage.users.containsKey(anotherUserId)) {
+        if (!userStorage.hasId(anotherUserId)) {
             throw new NotFoundException("Пользователь с id = " + anotherUserId + " не найден");
         }
         List<Long> commonFriends = new ArrayList<>();
         Set<Long> friends = new HashSet<>();
 
         List<Long> common = Stream.concat(
-                userStorage.users.get(userId).getFriends().stream(),
-                userStorage.users.get(anotherUserId).getFriends().stream()
+                userStorage.getUserById(userId).getFriends().stream(),
+                userStorage.getUserById(anotherUserId).getFriends().stream()
         ).collect(Collectors.toList());
 
         for (Long friendId : common) {
@@ -81,7 +81,23 @@ public class UserService {
         return getUsersByIds(commonFriends);
     }
 
+    public User addUser(User user) {
+        return userStorage.addUser(user);
+    }
+
+    public List<User> getUsers() {
+        return userStorage.getUsers();
+    }
+
+    public User getUserById(Long id) {
+        return userStorage.getUserById(id);
+    }
+
+    public User updateUser(User user) {
+        return userStorage.updateUser(user);
+    }
+
     private List<User> getUsersByIds(List<Long> ids) {
-        return ids.stream().map(userStorage.users::get).collect(Collectors.toList());
+        return ids.stream().map(userStorage::getUserById).collect(Collectors.toList());
     }
 }

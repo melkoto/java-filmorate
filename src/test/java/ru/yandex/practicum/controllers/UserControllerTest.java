@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.models.User;
-import ru.yandex.practicum.service.user.UserService;
-import ru.yandex.practicum.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.services.user.UserService;
+import ru.yandex.practicum.storages.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.time.Month;
