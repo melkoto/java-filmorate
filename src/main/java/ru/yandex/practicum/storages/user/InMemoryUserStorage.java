@@ -29,10 +29,6 @@ public class InMemoryUserStorage implements UserStorage {
             user.setName(user.getLogin());
         }
 
-        if (user.getLogin().split(" ").length > 1) {
-            throw new BadRequestException("Логин должен быть без пробела");
-        }
-
         user.setId(id);
         users.put(id, user);
 
@@ -40,21 +36,20 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    public boolean doesNotExist(Long id) {
+    public boolean doesNotHave(Long id) {
+        log.info("Проверка на существование пользователя с id = {}", id);
         return !users.containsKey(id);
     }
 
     @Override
     public List<User> getUsers() {
+        log.info("Получение списка пользователей");
         return new ArrayList<>(users.values());
     }
 
     @Override
     public User getUserById(Long id) {
-        if (users.get(id) == null) {
-            throw new NotFoundException("Пользователь с id = " + id + " не найден");
-        }
-
+        log.info("Получение пользователя с id = {}", id);
         return users.get(id);
     }
 
@@ -62,19 +57,9 @@ public class InMemoryUserStorage implements UserStorage {
     public User updateUser(User user) {
         long id = user.getId();
 
-        if (user.getLogin().split(" ").length > 1) {
-            log.error("Login cant have empty space");
-            throw new BadRequestException("Логин не может быть пустым");
-        }
-
-        if (!users.containsKey(id)) {
-            log.error("User with id = {} does not exist.", id);
-            throw new NotFoundException("Пользователь с id = " + id + " не найден.");
-
-        }
-
         users.put(id, user);
         log.info("Пользователь с id = {} обновлен", id);
+
         return user;
     }
 

@@ -3,6 +3,7 @@ package ru.yandex.practicum.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.models.User;
 import ru.yandex.practicum.services.user.UserService;
 
@@ -26,12 +27,22 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
+        if (user.getLogin().split(" ").length > 1) {
+            throw new BadRequestException("Логин должен быть без пробела");
+        }
+
         return userService.addUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
+
+        if (user.getLogin().split(" ").length > 1) {
+            log.error("Логин должен быть без пробелов");
+            throw new BadRequestException("Логин должен быть без пробелов");
+        }
+
         return userService.updateUser(user);
     }
 

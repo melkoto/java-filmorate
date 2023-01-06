@@ -17,11 +17,11 @@ public class FilmService {
     }
 
     public void likeFilm(long filmId, long userId) {
-        if (filmStorage.doesNotExist(filmId)) {
+        if (filmStorage.doesNotHave(filmId)) {
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
         }
 
-        if (filmStorage.doesNotExist(userId)) {
+        if (filmStorage.doesNotHave(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
@@ -29,11 +29,11 @@ public class FilmService {
     }
 
     public void removeLikes(long filmId, long userId) {
-        if (filmStorage.doesNotExist(filmId)) {
+        if (filmStorage.doesNotHave(filmId)) {
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
         }
 
-        if (filmStorage.doesNotExist(userId)) {
+        if (filmStorage.doesNotHave(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
@@ -49,7 +49,7 @@ public class FilmService {
     }
 
     public Film getFilmById(Long id) {
-        if (filmStorage.doesNotExist(id)) {
+        if (filmStorage.doesNotHave(id)) {
             throw new NotFoundException("Фильм с id = " + id + " не найден.");
         }
 
@@ -59,7 +59,7 @@ public class FilmService {
     public Film updateFilm(Film film) {
         long id = film.getId();
 
-        if (filmStorage.doesNotExist(id)) {
+        if (filmStorage.doesNotHave(id)) {
             throw new NotFoundException("Фильм с id = " + id + " не найден.");
         }
 

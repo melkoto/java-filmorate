@@ -23,11 +23,11 @@ public class UserService {
 
 
     public void addFriend(long userId, long friendId) {
-        if (userStorage.doesNotExist(userId)) {
+        if (userStorage.doesNotHave(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        if (userStorage.doesNotExist(friendId)) {
+        if (userStorage.doesNotHave(friendId)) {
             throw new NotFoundException("Пользователь с id = " + friendId + " не найден");
         }
 
@@ -36,11 +36,11 @@ public class UserService {
     }
 
     public void removeFriend(long userId, long friendId) {
-        if (userStorage.doesNotExist(userId)) {
+        if (userStorage.doesNotHave(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        if (userStorage.doesNotExist(friendId)) {
+        if (userStorage.doesNotHave(friendId)) {
             throw new NotFoundException("Пользователь с id = " + friendId + " не найден");
         }
 
@@ -48,7 +48,7 @@ public class UserService {
     }
 
     public List<User> getFriends(long userId) {
-        if (userStorage.doesNotExist(userId)) {
+        if (userStorage.doesNotHave(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
@@ -56,11 +56,11 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(long userId, long anotherUserId) {
-        if (userStorage.doesNotExist(userId)) {
+        if (userStorage.doesNotHave(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        if (userStorage.doesNotExist(anotherUserId)) {
+        if (userStorage.doesNotHave(anotherUserId)) {
             throw new NotFoundException("Пользователь с id = " + anotherUserId + " не найден");
         }
         List<Long> commonFriends = new ArrayList<>();
@@ -91,10 +91,20 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
+        if (userStorage.doesNotHave(id)) {
+            throw new NotFoundException("Пользователь с id = " + id + " не найден");
+        }
+
         return userStorage.getUserById(id);
     }
 
     public User updateUser(User user) {
+        long id = user.getId();
+
+        if (userStorage.doesNotHave(id)) {
+            throw new NotFoundException("Пользователь с id = " + id + " не найден.");
+        }
+
         return userStorage.updateUser(user);
     }
 

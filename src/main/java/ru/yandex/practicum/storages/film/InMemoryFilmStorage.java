@@ -2,7 +2,6 @@ package ru.yandex.practicum.storages.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    public boolean doesNotExist(Long id) {
+    public boolean doesNotHave(Long id) {
         log.info("Проверка на существование фильма с id = {}", id);
         return !films.containsKey(id);
     }

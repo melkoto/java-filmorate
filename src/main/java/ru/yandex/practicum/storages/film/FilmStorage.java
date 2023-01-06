@@ -15,6 +15,8 @@ public interface FilmStorage {
     Film updateFilm(Film film);
 
     Film deleteFilm(Long id);
-    boolean doesNotExist(Long id);
+
+    boolean doesNotHave(Long id);
+
     List<Film> getPopularFilms(int count);
 }
