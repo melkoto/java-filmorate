@@ -3,10 +3,13 @@ package ru.yandex.practicum.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.services.film.FilmService;
+import ru.yandex.practicum.utils.Constants;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -27,11 +30,23 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
+        LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
+
+        if (releaseDate.isBefore(Constants.EARLIEST_RELEASE_DATE)) {
+            throw new BadRequestException("Дата выпуска должна быть не ранее 28 Декабря 1895.");
+        }
+
         return filmService.addFilm(film);
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
+        LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
+
+        if (releaseDate.isBefore(Constants.EARLIEST_RELEASE_DATE)) {
+            throw new BadRequestException("Дата выпуска должна быть не ранее 28 Декабря 1895.");
+        }
+
         return filmService.updateFilm(film);
     }
 

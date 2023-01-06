@@ -2,12 +2,9 @@ package ru.yandex.practicum.storages.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +14,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private static final LocalDate EARLIEST_RELEASE_DATE = LocalDate.of(1895, Month.DECEMBER, 28);
 
     private final Map<Long, Film> films = new HashMap<>();
 
@@ -29,12 +25,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
-
-        if (releaseDate.isBefore(EARLIEST_RELEASE_DATE)) {
-            throw new BadRequestException("Дата выпуска должна быть не ранее 28 Декабря 1895.");
-        }
-
         long id = getId();
 
         film.setId(id);
@@ -67,11 +57,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         long id = film.getId();
-        LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
-
-        if (releaseDate.isBefore(EARLIEST_RELEASE_DATE)) {
-            throw new BadRequestException("Дата выпуска должна быть не ранее 28 Декабря 1895.");
-        }
 
         if (!films.containsKey(id)) {
             throw new NotFoundException("Фильм с id = " + id + " не найден.");
@@ -99,7 +84,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.values()
                 .stream()
                 .sorted((film1, film2) -> film2.getLikes().size() - film1.getLikes()
-                .size()).limit(count)
+                        .size()).limit(count)
                 .collect(Collectors.toList());
     }
 }
