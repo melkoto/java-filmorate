@@ -45,8 +45,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    public boolean hasId(Long id) {
-        return films.containsKey(id);
+    public boolean doesNotExist(Long id) {
+        return !films.containsKey(id);
     }
 
     @Override
@@ -96,6 +96,10 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public List<Film> getPopularFilms(int count) {
 
-        return films.values().stream().sorted((film1, film2) -> film2.getLikes().size() - film1.getLikes().size()).limit(count).collect(Collectors.toList());
+        return films.values()
+                .stream()
+                .sorted((film1, film2) -> film2.getLikes().size() - film1.getLikes()
+                .size()).limit(count)
+                .collect(Collectors.toList());
     }
 }

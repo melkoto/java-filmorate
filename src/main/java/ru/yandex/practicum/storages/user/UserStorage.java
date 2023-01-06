@@ -14,4 +14,5 @@ public interface UserStorage {
     User updateUser(User user);
 
     User deleteUser(Long id);
+    boolean doesNotExist(Long id);
 }

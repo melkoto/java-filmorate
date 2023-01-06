@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.User;
 import ru.yandex.practicum.storages.user.InMemoryUserStorage;
+import ru.yandex.practicum.storages.user.UserStorage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 
 @Service
 public class UserService {
-    private final InMemoryUserStorage userStorage;
+    private final UserStorage userStorage;
 
     public UserService(InMemoryUserStorage userStorage) {
         this.userStorage = userStorage;
@@ -22,11 +23,11 @@ public class UserService {
 
 
     public void addFriend(long userId, long friendId) {
-        if (!userStorage.hasId(userId)) {
+        if (userStorage.doesNotExist(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        if (!userStorage.hasId(friendId)) {
+        if (userStorage.doesNotExist(friendId)) {
             throw new NotFoundException("Пользователь с id = " + friendId + " не найден");
         }
 
@@ -35,11 +36,11 @@ public class UserService {
     }
 
     public void removeFriend(long userId, long friendId) {
-        if (!userStorage.hasId(userId)) {
+        if (userStorage.doesNotExist(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        if (!userStorage.hasId(friendId)) {
+        if (userStorage.doesNotExist(friendId)) {
             throw new NotFoundException("Пользователь с id = " + friendId + " не найден");
         }
 
@@ -47,7 +48,7 @@ public class UserService {
     }
 
     public List<User> getFriends(long userId) {
-        if (!userStorage.hasId(userId)) {
+        if (userStorage.doesNotExist(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
@@ -55,11 +56,11 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(long userId, long anotherUserId) {
-        if (!userStorage.hasId(userId)) {
+        if (userStorage.doesNotExist(userId)) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        if (!userStorage.hasId(anotherUserId)) {
+        if (userStorage.doesNotExist(anotherUserId)) {
             throw new NotFoundException("Пользователь с id = " + anotherUserId + " не найден");
         }
         List<Long> commonFriends = new ArrayList<>();
