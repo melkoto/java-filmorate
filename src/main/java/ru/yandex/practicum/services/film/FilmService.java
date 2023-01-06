@@ -49,10 +49,20 @@ public class FilmService {
     }
 
     public Film getFilmById(Long id) {
+        if (filmStorage.doesNotExist(id)) {
+            throw new NotFoundException("Фильм с id = " + id + " не найден.");
+        }
+
         return filmStorage.getFilmById(id);
     }
 
     public Film updateFilm(Film film) {
+        long id = film.getId();
+
+        if (filmStorage.doesNotExist(id)) {
+            throw new NotFoundException("Фильм с id = " + id + " не найден.");
+        }
+
         return filmStorage.updateFilm(film);
     }
 

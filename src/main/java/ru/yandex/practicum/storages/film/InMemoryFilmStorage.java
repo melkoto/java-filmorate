@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-
     private final Map<Long, Film> films = new HashMap<>();
 
     private long id = 1;
@@ -30,56 +29,45 @@ public class InMemoryFilmStorage implements FilmStorage {
         film.setId(id);
         films.put(id, film);
 
-        log.info("Фильм с id = {} добавлен в базу.", id);
+        log.info("Фильм {} добавлен в базу", film.getName());
 
         return film;
     }
 
     public boolean doesNotExist(Long id) {
+        log.info("Проверка на существование фильма с id = {}", id);
         return !films.containsKey(id);
     }
 
     @Override
     public List<Film> getFilms() {
+        log.info("Получен список всех фильмов.");
         return new ArrayList<>(films.values());
     }
 
     @Override
     public Film getFilmById(Long id) {
-
-        if (!films.containsKey(id)) {
-            throw new NotFoundException("Фильм с id = " + id + " не найден.");
-        }
-
+        log.info("Получение фильма с id = {}", id);
         return films.get(id);
     }
 
     @Override
     public Film updateFilm(Film film) {
         long id = film.getId();
-
-        if (!films.containsKey(id)) {
-            throw new NotFoundException("Фильм с id = " + id + " не найден.");
-        }
-
         films.put(id, film);
 
         log.info("Фильм с id = {} обновлен.", id);
-
         return film;
     }
 
     @Override
     public Film deleteFilm(Long id) {
-
-        if (!films.containsKey(id)) {
-            throw new NotFoundException("Фильм с id = " + id + " не найден.");
-        }
-
+        log.info("Удаление фильма с id = {}", id);
         return films.remove(id);
     }
 
     public List<Film> getPopularFilms(int count) {
+        log.info("Получение списка самых популярных фильмов.");
 
         return films.values()
                 .stream()
