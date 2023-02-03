@@ -33,11 +33,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    public boolean doesNotHave(Long id) {
-        log.info("Проверка на существование фильма с id = {}", id);
-        return !films.containsKey(id);
-    }
-
     @Override
     public List<Film> getFilms() {
         log.info("Получен список всех фильмов.");

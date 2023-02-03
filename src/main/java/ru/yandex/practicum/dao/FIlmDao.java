@@ -1,11 +1,10 @@
-package ru.yandex.practicum.storages.film;
+package ru.yandex.practicum.dao;
 
 import ru.yandex.practicum.models.Film;
 
 import java.util.List;
 
-public interface FilmStorage {
-
+public interface FIlmDao {
     Film addFilm(Film film);
 
     List<Film> getFilms();

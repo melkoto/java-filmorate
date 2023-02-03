@@ -1,5 +1,6 @@
 package ru.yandex.practicum.services.film;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
@@ -8,6 +9,7 @@ import ru.yandex.practicum.storages.film.InMemoryFilmStorage;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
@@ -17,11 +19,11 @@ public class FilmService {
     }
 
     public void likeFilm(long filmId, long userId) {
-        if (filmStorage.doesNotHave(filmId)) {
+        if (filmStorage.getFilmById(filmId) == null) {
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
         }
 
-        if (filmStorage.doesNotHave(userId)) {
+        if (filmStorage.getFilmById(filmId) == null) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
@@ -29,11 +31,11 @@ public class FilmService {
     }
 
     public void removeLikes(long filmId, long userId) {
-        if (filmStorage.doesNotHave(filmId)) {
+        if (filmStorage.getFilmById(filmId) == null) {
             throw new NotFoundException("Фильм с id = " + filmId + " не найден");
         }
 
-        if (filmStorage.doesNotHave(userId)) {
+        if (filmStorage.getFilmById(filmId) == null) {
             throw new NotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
@@ -49,7 +51,7 @@ public class FilmService {
     }
 
     public Film getFilmById(Long id) {
-        if (filmStorage.doesNotHave(id)) {
+        if (filmStorage.getFilmById(id) == null) {
             throw new NotFoundException("Фильм с id = " + id + " не найден.");
         }
 
@@ -59,7 +61,7 @@ public class FilmService {
     public Film updateFilm(Film film) {
         long id = film.getId();
 
-        if (filmStorage.doesNotHave(id)) {
+        if (filmStorage.getFilmById(id) == null) {
             throw new NotFoundException("Фильм с id = " + id + " не найден.");
         }
 
