@@ -1,8 +1,29 @@
 server:
   port: 8080
 
-
   error:
     include-message: always
     include-binding-errors: always
     include-exception: true
+
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  sql:
+    init:
+      mode: always
+
+  datasource:
+    url: jdbc:h2:file:./db/filmorate
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc: DEBUG
