@@ -1,24 +1,24 @@
 package ru.yandex.practicum.services.user;
 
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.dao.UserDao;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.User;
 import ru.yandex.practicum.storages.user.InMemoryUserStorage;
 import ru.yandex.practicum.storages.user.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
 public class UserService {
     private final UserStorage userStorage;
+    private final UserDao userDao;
 
-    public UserService(InMemoryUserStorage userStorage) {
+    public UserService(InMemoryUserStorage userStorage, UserDao userDao) {
         this.userStorage = userStorage;
+        this.userDao = userDao;
     }
 
 
@@ -83,19 +83,15 @@ public class UserService {
     }
 
     public User addUser(User user) {
-        return userStorage.addUser(user);
+        return userDao.addUser(user);
     }
 
     public List<User> getUsers() {
         return userStorage.getUsers();
     }
 
-    public User getUserById(Long id) {
-        if (userStorage.doesNotHave(id)) {
-            throw new NotFoundException("Пользователь с id = " + id + " не найден");
-        }
-
-        return userStorage.getUserById(id);
+    public Optional<User> getUserById(Long id) {
+        return userDao.getUserById(id);
     }
 
     public User updateUser(User user) {

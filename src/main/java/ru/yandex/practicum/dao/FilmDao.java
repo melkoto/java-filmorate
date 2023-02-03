@@ -3,13 +3,14 @@ package ru.yandex.practicum.dao;
 import ru.yandex.practicum.models.Film;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FilmDao {
     Film addFilm(Film film);
 
     List<Film> getFilms();
 
-    Film getFilmById(Long id);
+    Optional<Film> getFilmById(Long id);
 
     Film updateFilm(Film film);
 
