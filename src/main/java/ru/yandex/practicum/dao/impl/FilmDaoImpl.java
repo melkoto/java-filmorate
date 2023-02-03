@@ -1,11 +1,11 @@
 package ru.yandex.practicum.dao.impl;
 
-import ru.yandex.practicum.dao.FIlmDao;
+import ru.yandex.practicum.dao.FilmDao;
 import ru.yandex.practicum.models.Film;
 
 import java.util.List;
 
-public class FilmDaoImpl implements FIlmDao {
+public class FilmDaoImpl implements FilmDao {
     @Override
     public Film addFilm(Film film) {
         return null;

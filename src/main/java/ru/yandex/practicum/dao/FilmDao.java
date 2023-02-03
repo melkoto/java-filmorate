@@ -4,7 +4,7 @@ import ru.yandex.practicum.models.Film;
 
 import java.util.List;
 
-public interface FIlmDao {
+public interface FilmDao {
     Film addFilm(Film film);
 
     List<Film> getFilms();
