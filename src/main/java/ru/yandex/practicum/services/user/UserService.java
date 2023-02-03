@@ -87,7 +87,7 @@ public class UserService {
     }
 
     public List<User> getUsers() {
-        return userStorage.getUsers();
+        return userDao.getUsers();
     }
 
     public Optional<User> getUserById(Long id) {
