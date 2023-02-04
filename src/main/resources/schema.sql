@@ -43,6 +43,6 @@ CREATE TABLE IF NOT EXISTS friends
 (
     from_user LONG REFERENCES users (id) ON DELETE CASCADE,
     to_user   LONG REFERENCES users (id) ON DELETE CASCADE,
-    status    VARCHAR CHECK (status IN ('pending', 'accepted', 'declined')),
+    status    VARCHAR DEFAULT 'pending',
     PRIMARY KEY (from_user, to_user)
 );

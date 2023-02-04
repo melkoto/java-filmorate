@@ -53,13 +53,22 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
-        userService.addFriend(id, friendId);
+    public String addFriend(@PathVariable long id, @PathVariable long friendId) {
+        return userService.addFriend(id, friendId);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}/{status}")
+    public void acceptFriend(@PathVariable long id, @PathVariable long friendId, @PathVariable String status) {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void removeFriend(@PathVariable long id, @PathVariable long friendId) {
-        userService.removeFriend(id, friendId);
+    public String removeFriend(@PathVariable long id, @PathVariable long friendId) {
+        return userService.removeFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}")
+    public User removeUser(@PathVariable long id) {
+        return userService.deleteUser(id);
     }
 
     @GetMapping("/{id}/friends")

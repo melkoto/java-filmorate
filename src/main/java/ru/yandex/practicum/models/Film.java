@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.yandex.practicum.enums.GenreEnum;
-import ru.yandex.practicum.enums.MpaEnum;
 import ru.yandex.practicum.exceptions.NotFoundException;
 
 import javax.validation.constraints.NotEmpty;
@@ -32,9 +30,9 @@ public class Film {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
 
-    private GenreEnum genre;
+    private String genre;
 
-    private MpaEnum mpa;
+    private String mpa;
 
     @Positive(message = "Продолжительность должна быть больше нуля")
     private int duration;

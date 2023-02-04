@@ -2,8 +2,6 @@ package ru.yandex.practicum.storages.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.exceptions.BadRequestException;
-import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.User;
 
 import java.util.ArrayList;

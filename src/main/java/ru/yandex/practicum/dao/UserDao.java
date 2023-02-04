@@ -15,4 +15,10 @@ public interface UserDao {
     User updateUser(User user);
 
     User deleteUser(Long id);
+
+    String addFriend(Long userId, Long friendId);
+
+    String removeFriend(Long userId, Long friendId);
+
+    List<User> getFriends(Long userId);
 }

@@ -9,15 +9,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Data
 public class User {
-    private final Set<Long> friends = new HashSet<>();
-
     @NotNull
     private long id;
 
@@ -34,16 +28,4 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Past(message = "Введите год рождения")
     private LocalDate birthday;
-
-    public void addFriend(long friendId) {
-        friends.add(friendId);
-    }
-
-    public void removeFriend(long friendId) {
-        friends.remove(friendId);
-    }
-
-    public List<Long> getFriends() {
-        return new ArrayList<>(friends);
-    }
 }
