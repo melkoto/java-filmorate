@@ -30,9 +30,9 @@ public class Film {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
 
-    private String genre;
+    private Genre[] genres;
 
-    private String mpa;
+    private Mpa mpa;
 
     @Positive(message = "Продолжительность должна быть больше нуля")
     private int duration;

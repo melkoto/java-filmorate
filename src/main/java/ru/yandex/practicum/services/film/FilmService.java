@@ -2,6 +2,7 @@ package ru.yandex.practicum.services.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.dao.FilmDao;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.storages.film.FilmStorage;
@@ -13,9 +14,11 @@ import java.util.List;
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final FilmDao filmDao;
 
-    public FilmService(InMemoryFilmStorage filmStorage) {
+    public FilmService(InMemoryFilmStorage filmStorage, FilmDao filmDao) {
         this.filmStorage = filmStorage;
+        this.filmDao = filmDao;
     }
 
     public void likeFilm(long filmId, long userId) {
@@ -43,7 +46,7 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) {
-        return filmStorage.addFilm(film);
+        return filmDao.addFilm(film);
     }
 
     public List<Film> getFilms() {

@@ -153,13 +153,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> getFriends(Long userId) {
-        if (getUserById(userId).isEmpty()) {
-            throw new NotFoundException("Пользователь с идентификатором " + userId + " не найден.");
+    public List<User> getFriends(Long id) {
+        if (getUserById(id).isEmpty()) {
+            throw new NotFoundException("Пользователь с идентификатором " + id + " не найден.");
         }
 
-        String sqlFrom = "SELECT TO_USER FROM FRIENDS WHERE FROM_USER =" + userId;
-        String sqlTo = "SELECT FROM_USER FROM FRIENDS WHERE TO_USER =" + userId + " AND STATUS = 'accepted'";
+        String sqlFrom = "SELECT TO_USER FROM FRIENDS WHERE FROM_USER =" + id;
+        String sqlTo = "SELECT FROM_USER FROM FRIENDS WHERE TO_USER =" + id + " AND STATUS = 'accepted'";
         List<Long> idsFrom = jdbcTemplate.queryForList(sqlFrom, Long.class);
         List<Long> idsTo = jdbcTemplate.queryForList(sqlTo, Long.class);
         List<Long> allFriends = Stream.concat(idsFrom.stream(), idsTo.stream()).distinct().collect(Collectors.toList());

@@ -46,3 +46,10 @@ CREATE TABLE IF NOT EXISTS friends
     status    VARCHAR DEFAULT 'pending',
     PRIMARY KEY (from_user, to_user)
 );
+
+CREATE TABLE IF NOT EXISTS films_genres
+(
+    film_id  LONG REFERENCES films (id) ON DELETE CASCADE,
+    genre_id LONG REFERENCES genres (id) ON DELETE CASCADE,
+    PRIMARY KEY (film_id, genre_id)
+);
