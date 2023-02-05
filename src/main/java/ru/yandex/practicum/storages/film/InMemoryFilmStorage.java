@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -61,12 +60,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public List<Film> getPopularFilms(int count) {
-        log.info("Получение списка самых популярных фильмов.");
-
-        return films.values()
-                .stream()
-                .sorted((film1, film2) -> film2.getLikes().size() - film1.getLikes()
-                        .size()).limit(count)
-                .collect(Collectors.toList());
+        return null;
     }
 }

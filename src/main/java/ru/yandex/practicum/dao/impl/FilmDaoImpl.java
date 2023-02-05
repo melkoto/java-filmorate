@@ -135,6 +135,32 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
+    public void likeFilm(long filmId, long userId) {
+        if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{filmId}).next()) {
+            throw new NotFoundException("Фильм с id " + filmId + " не найден");
+        }
+
+        if (!jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE id =?", new Object[]{userId}).next()) {
+            throw new NotFoundException("Пользователь с id " + userId + " не найден");
+        }
+
+        jdbcTemplate.update("INSERT INTO likes (film_id, user_id) VALUES (?, ?)", filmId, userId);
+    }
+
+    @Override
+    public void removeLike(long filmId, long userId) {
+        if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{filmId}).next()) {
+            throw new NotFoundException("Фильм с id " + filmId + " не найден");
+        }
+
+        if (!jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE id =?", new Object[]{userId}).next()) {
+            throw new NotFoundException("Пользователь с id " + userId + " не найден");
+        }
+
+        jdbcTemplate.update("DELETE FROM likes WHERE film_id = ? AND user_id = ?", filmId, userId);
+    }
+
+    @Override
     public Film updateFilm(Film film) {
         if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{film.getId()}).next()) {
             throw new NotFoundException("Фильм с id " + film.getId() + " не найден");
@@ -186,7 +212,29 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public List<Film> getPopularFilms(int count) {
-        return null;
+        String sql = "SELECT films.id, films.name, films.description, films.release_date, films.duration, films.mpa_id, COUNT(likes.film_id) AS likes_count FROM films LEFT JOIN likes ON films.id = likes.film_id GROUP BY films.id ORDER BY likes_count DESC LIMIT ?";
+        List<Film> films = jdbcTemplate.query(sql, new Object[]{count}, (rs) -> {
+            List<Film> filmsList = new ArrayList<>();
+            while (rs.next()) {
+                Film film = new Film();
+                film.setId(rs.getInt("id"));
+                film.setName(rs.getString("name"));
+                film.setDescription(rs.getString("description"));
+                film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+                film.setDuration(rs.getInt("duration"));
+
+                Mpa mpa = new Mpa();
+                mpa.setId(rs.getInt("mpa_id"));
+                String mpaName = getMpaById(mpa.getId()).get().getName();
+                mpa.setName(mpaName);
+                film.setMpa(mpa);
+
+                filmsList.add(film);
+            }
+            return filmsList;
+        });
+
+        return films;
     }
 
     @NotNull

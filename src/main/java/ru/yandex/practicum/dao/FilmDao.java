@@ -20,4 +20,8 @@ public interface FilmDao {
     List<Film> getPopularFilms(int count);
 
     Optional<Mpa> getMpaById(Long id);
+
+    void likeFilm(long filmId, long userId);
+
+    void removeLike(long filmId, long userId);
 }
