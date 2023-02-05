@@ -59,13 +59,7 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
-        long id = film.getId();
-
-        if (filmStorage.getFilmById(id) == null) {
-            throw new NotFoundException("Фильм с id = " + id + " не найден.");
-        }
-
-        return filmStorage.updateFilm(film);
+        return filmDao.updateFilm(film);
     }
 
     public List<Film> getPopularFilms(int count) {

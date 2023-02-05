@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.FilmDao;
 import ru.yandex.practicum.exceptions.BadRequestException;
+import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.models.Genre;
 import ru.yandex.practicum.models.Mpa;
@@ -17,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,8 +38,7 @@ public class FilmDaoImpl implements FilmDao {
             throw new BadRequestException("Возрастной рейтинг с id " + film.getMpa().getId() + " не найден");
         }
 
-        String insertFilm = "INSERT INTO films (name, release_date, description, duration, mpa_id) "
-                + "VALUES (?, ?, ?, ?, ?)";
+        String insertFilm = "INSERT INTO films (name, release_date, description, duration, mpa_id) " + "VALUES (?, ?, ?, ?, ?)";
 
         KeyHolder filmKeyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -76,28 +77,21 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public List<Film> getFilms() {
-        String sql = "SELECT * FROM films";
-        String genresSql = "SELECT g.* FROM genres g JOIN films_genres fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
-        SqlRowSet films = jdbcTemplate.queryForRowSet(sql);
-
-        List<Genre> genresList = jdbcTemplate.query(genresSql, new Object[]{1}, (rs, rowNum) -> {
-            Genre genre = new Genre();
-            genre.setId(rs.getInt("id"));
-            genre.setName(rs.getString("name"));
-            return genre;
-        });
-
-        if (films.next()) {
-            return jdbcTemplate.query(sql, (rs, rowNum) -> {
-                return getFilmGenre(genresList, rs);
-            });
-        } else {
-            throw new BadRequestException("Фильмы не найдены");
+        List<Film> result = new ArrayList<>();
+        String sql = "SELECT id FROM films";
+        List<Long> ids = jdbcTemplate.queryForList(sql, Long.class);
+        for (Long id : ids) {
+            result.add(getFilmById(id).get());
         }
+        return result;
     }
 
     @Override
     public Optional<Film> getFilmById(Long id) {
+        if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{id}).next()) {
+            throw new NotFoundException("Фильм с id " + id + " не найден");
+        }
+
         String filmSql = "SELECT * FROM films WHERE id = ?";
         String genresSql = "SELECT g.* FROM genres g JOIN films_genres fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
 
@@ -120,9 +114,13 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     public Optional<Mpa> getMpaById(Long id) {
+        if (!jdbcTemplate.queryForRowSet("SELECT * FROM MPAS WHERE id =?", new Object[]{id}).next()) {
+            throw new BadRequestException("Возрастной рейтинг с id " + id + " не найден");
+        }
+
         String sql = "SELECT * FROM mpas WHERE id = ?";
 
-        Mpa mpa = jdbcTemplate.query(sql, new Object[]{1}, (rs) -> {
+        Mpa mpa = jdbcTemplate.query(sql, new Object[]{id}, (rs) -> {
             if (rs.next()) {
                 Mpa m = new Mpa();
                 m.setId(rs.getInt("id"));
@@ -138,12 +136,40 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public Film updateFilm(Film film) {
-        return null;
+        if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{film.getId()}).next()) {
+            throw new NotFoundException("Фильм с id " + film.getId() + " не найден");
+        }
+
+        String sql = "UPDATE films SET name = ?, release_date = ?, description = ?, duration = ?, mpa_id = ? WHERE id = ?";
+        String deleteGenres = "DELETE FROM films_genres WHERE film_id = ?";
+        String insertGenres = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
+
+        jdbcTemplate.update(sql, film.getName(), film.getReleaseDate(), film.getDescription(), film.getDuration(), film.getMpa().getId(), film.getId());
+        jdbcTemplate.update(deleteGenres, film.getId());
+
+        String mpaName = jdbcTemplate.queryForObject("SELECT name FROM MPAS WHERE id =?", new Object[]{film.getMpa().getId()}, String.class);
+        film.getMpa().setName(mpaName);
+
+        if (film.getGenres() == null) {
+            return film;
+        }
+
+        for (Genre genre : film.getGenres()) {
+            jdbcTemplate.update(insertGenres, film.getId(), genre.getId());
+        }
+
+        return film;
     }
 
     @Override
     public Film deleteFilm(Long id) {
-        return null;
+        Film film = getFilmById(id).orElseThrow(() -> new BadRequestException("Фильм с id " + id + " не найден"));
+
+        String sql = "DELETE FROM films WHERE id = ?";
+        String deleteGenres = "DELETE FROM films_genres WHERE film_id = ?";
+        jdbcTemplate.update(deleteGenres, id);
+        jdbcTemplate.update(sql, id);
+        return film;
     }
 
     @Override
