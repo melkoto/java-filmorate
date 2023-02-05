@@ -51,7 +51,7 @@ public class FilmService {
     }
 
     public List<Film> getFilms() {
-        return filmStorage.getFilms();
+        return filmDao.getFilms();
     }
 
     public Optional<Film> getFilmById(Long id) {

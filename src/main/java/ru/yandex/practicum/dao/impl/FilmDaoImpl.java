@@ -73,7 +73,40 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public List<Film> getFilms() {
-        return null;
+        String sql = "SELECT * FROM films";
+        String genresSql = "SELECT g.* FROM genres g JOIN films_genres fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
+        SqlRowSet films = jdbcTemplate.queryForRowSet(sql);
+
+        List<Genre> genresList = jdbcTemplate.query(genresSql, new Object[]{1}, (rs, rowNum) -> {
+            Genre genre = new Genre();
+            genre.setId(rs.getInt("id"));
+            genre.setName(rs.getString("name"));
+            return genre;
+        });
+
+        if (films.next()) {
+            return jdbcTemplate.query(sql, (rs, rowNum) -> {
+                Film film = new Film();
+                film.setId(rs.getInt("id"));
+                film.setName(rs.getString("name"));
+                film.setDescription(rs.getString("description"));
+                film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+                film.setDuration(rs.getInt("duration"));
+
+                Mpa mpa = new Mpa();
+                mpa.setId(rs.getInt("mpa_id"));
+                String mpaName = getMpaById(mpa.getId()).get().getName();
+                mpa.setName(mpaName);
+                film.setMpa(mpa);
+
+                Genre[] genres = genresList.toArray(new Genre[0]);
+                film.setGenres(genres);
+
+                return film;
+            });
+        } else {
+            throw new BadRequestException("Фильмы не найдены");
+        }
     }
 
     @Override
