@@ -141,6 +141,7 @@ public class FilmDaoImpl implements FilmDao {
         }
 
         List<Long> genresList = new ArrayList<>();
+        List<Genre> uniqueGenres = new ArrayList<>();
 
         String sql = "UPDATE films SET name = ?, release_date = ?, description = ?, duration = ?, mpa_id = ? WHERE id = ?";
         String deleteGenres = "DELETE FROM films_genres WHERE film_id = ?";
@@ -156,8 +157,6 @@ public class FilmDaoImpl implements FilmDao {
             return film;
         }
 
-        List<Genre> genres = new ArrayList<>();
-
         for (Genre genre : film.getGenres()) {
             if (!genresList.contains(genre.getId())) {
                 String genreName = jdbcTemplate.queryForObject("SELECT name FROM genres WHERE id =?", new Object[]{genre.getId()}, String.class);
@@ -165,11 +164,11 @@ public class FilmDaoImpl implements FilmDao {
                 jdbcTemplate.update(insertGenres, film.getId(), genre.getId());
                 genre.setName(genreName);
 
-                genres.add(genre);
+                uniqueGenres.add(genre);
             }
         }
 
-        film.setGenres(genres.toArray(new Genre[0]));
+        film.setGenres(uniqueGenres.toArray(new Genre[0]));
 
         return film;
     }
