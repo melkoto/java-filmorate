@@ -11,6 +11,7 @@ import ru.yandex.practicum.utils.Constants;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -51,7 +52,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable long id) {
+    public Optional<Film> getFilmById(@PathVariable long id) {
         return filmService.getFilmById(id);
     }
 

@@ -10,6 +10,7 @@ import ru.yandex.practicum.dao.FilmDao;
 import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.models.Genre;
+import ru.yandex.practicum.models.Mpa;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -28,7 +29,6 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public Film addFilm(Film film) {
-
         if (!jdbcTemplate.queryForRowSet("SELECT * FROM MPAS WHERE id =?", new Object[]{film.getMpa().getId()}).next()) {
             throw new BadRequestException("Возрастной рейтинг с id " + film.getMpa().getId() + " не найден");
         }
@@ -52,8 +52,6 @@ public class FilmDaoImpl implements FilmDao {
         String mpaName = jdbcTemplate.queryForObject("SELECT name FROM MPAS WHERE id =?", new Object[]{film.getMpa().getId()}, String.class);
 
         film.getMpa().setName(mpaName);
-
-        jdbcTemplate.update(insertFilm, film.getName(), film.getReleaseDate(), film.getDescription(), film.getDuration(), film.getMpa().getId());
 
         if (film.getGenres() != null) {
             String insertFilmGenre = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
@@ -80,7 +78,58 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public Optional<Film> getFilmById(Long id) {
-        return Optional.empty();
+        String filmSql = "SELECT * FROM films WHERE id = ?";
+        String genresSql = "SELECT g.* FROM genres g JOIN films_genres fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
+
+        List<Genre> genresList = jdbcTemplate.query(genresSql, new Object[]{id}, (rs, rowNum) -> {
+            Genre genre = new Genre();
+            genre.setId(rs.getInt("id"));
+            genre.setName(rs.getString("name"));
+            return genre;
+        });
+
+        Film film = jdbcTemplate.query(filmSql, new Object[]{id}, (rs) -> {
+            if (rs.next()) {
+                Film f = new Film();
+                f.setId(rs.getInt("id"));
+                f.setName(rs.getString("name"));
+                f.setDescription(rs.getString("description"));
+                f.setReleaseDate(rs.getDate("release_date").toLocalDate());
+                f.setDuration(rs.getInt("duration"));
+
+                Mpa mpa = new Mpa();
+                mpa.setId(rs.getInt("mpa_id"));
+                String mpaName = getMpaById(mpa.getId()).get().getName();
+                mpa.setName(mpaName);
+                f.setMpa(mpa);
+
+                Genre[] genres = genresList.toArray(new Genre[0]);
+                f.setGenres(genres);
+
+                return f;
+            } else {
+                throw new BadRequestException("Фильм с id " + id + " не найден");
+            }
+        });
+
+        return Optional.ofNullable(film);
+    }
+
+    public Optional<Mpa> getMpaById(Long id) {
+        String sql = "SELECT * FROM mpas WHERE id = ?";
+
+        Mpa mpa = jdbcTemplate.query(sql, new Object[]{1}, (rs) -> {
+            if (rs.next()) {
+                Mpa m = new Mpa();
+                m.setId(rs.getInt("id"));
+                m.setName(rs.getString("name"));
+                return m;
+            } else {
+                throw new BadRequestException("Возрастной рейтинг с id " + id + " не найден");
+            }
+        });
+
+        return Optional.ofNullable(mpa);
     }
 
     @Override

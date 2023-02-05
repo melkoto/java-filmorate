@@ -9,6 +9,7 @@ import ru.yandex.practicum.storages.film.FilmStorage;
 import ru.yandex.practicum.storages.film.InMemoryFilmStorage;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -53,12 +54,8 @@ public class FilmService {
         return filmStorage.getFilms();
     }
 
-    public Film getFilmById(Long id) {
-        if (filmStorage.getFilmById(id) == null) {
-            throw new NotFoundException("Фильм с id = " + id + " не найден.");
-        }
-
-        return filmStorage.getFilmById(id);
+    public Optional<Film> getFilmById(Long id) {
+        return filmDao.getFilmById(id);
     }
 
     public Film updateFilm(Film film) {

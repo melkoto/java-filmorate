@@ -1,6 +1,7 @@
 package ru.yandex.practicum.dao;
 
 import ru.yandex.practicum.models.Film;
+import ru.yandex.practicum.models.Mpa;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,4 +18,6 @@ public interface FilmDao {
     Film deleteFilm(Long id);
 
     List<Film> getPopularFilms(int count);
+
+    Optional<Mpa> getMpaById(Long id);
 }
