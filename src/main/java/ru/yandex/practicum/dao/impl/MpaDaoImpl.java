@@ -5,6 +5,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.MpaDao;
 import ru.yandex.practicum.exceptions.BadRequestException;
+import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Mpa;
 
 import java.util.ArrayList;
@@ -20,6 +21,10 @@ public class MpaDaoImpl implements MpaDao {
 
     @Override
     public Mpa getMpaById(int id) {
+        if (!jdbcTemplate.queryForRowSet("SELECT * FROM mpas WHERE id =?", new Object[]{id}).next()) {
+            throw new NotFoundException("Mpa с id " + id + " не найден");
+        }
+
         String sql = "SELECT * FROM mpas WHERE id = ?";
         SqlRowSet mpa = jdbcTemplate.queryForRowSet(sql, id);
 

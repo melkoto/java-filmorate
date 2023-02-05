@@ -140,6 +140,8 @@ public class FilmDaoImpl implements FilmDao {
             throw new NotFoundException("Фильм с id " + film.getId() + " не найден");
         }
 
+        List<Long> genresList = new ArrayList<>();
+
         String sql = "UPDATE films SET name = ?, release_date = ?, description = ?, duration = ?, mpa_id = ? WHERE id = ?";
         String deleteGenres = "DELETE FROM films_genres WHERE film_id = ?";
         String insertGenres = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
@@ -155,7 +157,14 @@ public class FilmDaoImpl implements FilmDao {
         }
 
         for (Genre genre : film.getGenres()) {
-            jdbcTemplate.update(insertGenres, film.getId(), genre.getId());
+            if (!genresList.contains(genre.getId())) {
+                String genreName = jdbcTemplate.queryForObject("SELECT name FROM genres WHERE id =?", new Object[]{genre.getId()}, String.class);
+                genresList.add(genre.getId());
+                jdbcTemplate.update(insertGenres, film.getId(), genre.getId());
+                genre.setName(genreName);
+            } else {
+                log.error("Жанр с id " + genre.getId() + " уже добавлен");
+            }
         }
 
         return film;

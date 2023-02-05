@@ -5,6 +5,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.GenreDao;
 import ru.yandex.practicum.exceptions.BadRequestException;
+import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Genre;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class GenreDaoImpl implements GenreDao {
     @Override
     public Genre getGenreById(long id) {
         if (!jdbcTemplate.queryForRowSet("SELECT * FROM genres WHERE id =?", new Object[]{id}).next()) {
-            throw new BadRequestException("Жанр с id " + id + " не найден");
+            throw new NotFoundException("Жанр с id " + id + " не найден");
         }
 
         String sql = "SELECT * FROM genres WHERE id = ?";
