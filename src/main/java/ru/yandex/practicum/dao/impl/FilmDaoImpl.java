@@ -1,6 +1,7 @@
 package ru.yandex.practicum.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -13,6 +14,8 @@ import ru.yandex.practicum.models.Genre;
 import ru.yandex.practicum.models.Mpa;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
@@ -86,23 +89,7 @@ public class FilmDaoImpl implements FilmDao {
 
         if (films.next()) {
             return jdbcTemplate.query(sql, (rs, rowNum) -> {
-                Film film = new Film();
-                film.setId(rs.getInt("id"));
-                film.setName(rs.getString("name"));
-                film.setDescription(rs.getString("description"));
-                film.setReleaseDate(rs.getDate("release_date").toLocalDate());
-                film.setDuration(rs.getInt("duration"));
-
-                Mpa mpa = new Mpa();
-                mpa.setId(rs.getInt("mpa_id"));
-                String mpaName = getMpaById(mpa.getId()).get().getName();
-                mpa.setName(mpaName);
-                film.setMpa(mpa);
-
-                Genre[] genres = genresList.toArray(new Genre[0]);
-                film.setGenres(genres);
-
-                return film;
+                return getFilmGenre(genresList, rs);
             });
         } else {
             throw new BadRequestException("Фильмы не найдены");
@@ -123,23 +110,7 @@ public class FilmDaoImpl implements FilmDao {
 
         Film film = jdbcTemplate.query(filmSql, new Object[]{id}, (rs) -> {
             if (rs.next()) {
-                Film f = new Film();
-                f.setId(rs.getInt("id"));
-                f.setName(rs.getString("name"));
-                f.setDescription(rs.getString("description"));
-                f.setReleaseDate(rs.getDate("release_date").toLocalDate());
-                f.setDuration(rs.getInt("duration"));
-
-                Mpa mpa = new Mpa();
-                mpa.setId(rs.getInt("mpa_id"));
-                String mpaName = getMpaById(mpa.getId()).get().getName();
-                mpa.setName(mpaName);
-                f.setMpa(mpa);
-
-                Genre[] genres = genresList.toArray(new Genre[0]);
-                f.setGenres(genres);
-
-                return f;
+                return getFilmGenre(genresList, rs);
             } else {
                 throw new BadRequestException("Фильм с id " + id + " не найден");
             }
@@ -178,5 +149,26 @@ public class FilmDaoImpl implements FilmDao {
     @Override
     public List<Film> getPopularFilms(int count) {
         return null;
+    }
+
+    @NotNull
+    private Film getFilmGenre(List<Genre> genresList, ResultSet rs) throws SQLException {
+        Film film = new Film();
+        film.setId(rs.getInt("id"));
+        film.setName(rs.getString("name"));
+        film.setDescription(rs.getString("description"));
+        film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+        film.setDuration(rs.getInt("duration"));
+
+        Mpa mpa = new Mpa();
+        mpa.setId(rs.getInt("mpa_id"));
+        String mpaName = getMpaById(mpa.getId()).get().getName();
+        mpa.setName(mpaName);
+        film.setMpa(mpa);
+
+        Genre[] genres = genresList.toArray(new Genre[0]);
+        film.setGenres(genres);
+
+        return film;
     }
 }
