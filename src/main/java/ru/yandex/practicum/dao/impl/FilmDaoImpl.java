@@ -212,7 +212,12 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public List<Film> getPopularFilms(int count) {
-        String sql = "SELECT films.id, films.name, films.description, films.release_date, films.duration, films.mpa_id, COUNT(likes.film_id) AS likes_count FROM films LEFT JOIN likes ON films.id = likes.film_id GROUP BY films.id ORDER BY likes_count DESC LIMIT ?";
+        String sql = "SELECT films.id, films.name, films.description, films.release_date, films.duration, films.mpa_id, COUNT(likes.film_id) AS likes_count " +
+                "FROM films LEFT JOIN likes ON films.id = likes.film_id " +
+                "GROUP BY films.id " +
+                "ORDER BY likes_count DESC " +
+                "LIMIT ?";
+
         List<Film> films = jdbcTemplate.query(sql, new Object[]{count}, (rs) -> {
             List<Film> filmsList = new ArrayList<>();
             while (rs.next()) {
@@ -234,6 +239,7 @@ public class FilmDaoImpl implements FilmDao {
             return filmsList;
         });
 
+        assert films != null;
         films.forEach(film -> {
             List<Genre> genresList = jdbcTemplate.query("SELECT genres.id, genres.name FROM genres LEFT JOIN films_genres ON genres.id = films_genres.genre_id WHERE films_genres.film_id = ?", new Object[]{film.getId()}, (rs) -> {
                 List<Genre> genres = new ArrayList<>();
