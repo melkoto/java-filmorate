@@ -234,6 +234,21 @@ public class FilmDaoImpl implements FilmDao {
             return filmsList;
         });
 
+        films.forEach(film -> {
+            List<Genre> genresList = jdbcTemplate.query("SELECT genres.id, genres.name FROM genres LEFT JOIN films_genres ON genres.id = films_genres.genre_id WHERE films_genres.film_id = ?", new Object[]{film.getId()}, (rs) -> {
+                List<Genre> genres = new ArrayList<>();
+                while (rs.next()) {
+                    Genre genre = new Genre();
+                    genre.setId(rs.getInt("id"));
+                    genre.setName(rs.getString("name"));
+                    genres.add(genre);
+                }
+                return genres;
+            });
+            Genre[] genres = genresList.toArray(new Genre[0]);
+            film.setGenres(genres);
+        });
+
         return films;
     }
 
