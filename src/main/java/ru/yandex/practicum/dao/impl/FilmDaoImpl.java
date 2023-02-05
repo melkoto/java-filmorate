@@ -156,16 +156,20 @@ public class FilmDaoImpl implements FilmDao {
             return film;
         }
 
+        List<Genre> genres = new ArrayList<>();
+
         for (Genre genre : film.getGenres()) {
             if (!genresList.contains(genre.getId())) {
                 String genreName = jdbcTemplate.queryForObject("SELECT name FROM genres WHERE id =?", new Object[]{genre.getId()}, String.class);
                 genresList.add(genre.getId());
                 jdbcTemplate.update(insertGenres, film.getId(), genre.getId());
                 genre.setName(genreName);
-            } else {
-                log.error("Жанр с id " + genre.getId() + " уже добавлен");
+
+                genres.add(genre);
             }
         }
+
+        film.setGenres(genres.toArray(new Genre[0]));
 
         return film;
     }
