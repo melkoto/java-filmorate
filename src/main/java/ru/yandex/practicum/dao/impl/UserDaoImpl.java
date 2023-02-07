@@ -3,6 +3,7 @@ package ru.yandex.practicum.dao.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -54,17 +55,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getUsers() {
-        return jdbcTemplate.query("SELECT * FROM users", (rs, rowNum) -> {
-
-            User user = new User();
-            user.setId(rs.getLong("id"));
-            user.setName(rs.getString("name"));
-            user.setEmail(rs.getString("email"));
-            user.setLogin(rs.getString("login"));
-            user.setBirthday(rs.getDate("birthday").toLocalDate());
-
-            return user;
-        });
+        return jdbcTemplate.query("SELECT * FROM users", userRowMapper);
     }
 
     @Override
@@ -182,4 +173,16 @@ public class UserDaoImpl implements UserDao {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(sql, field);
         return userRows.next();
     }
+
+    RowMapper<User> userRowMapper = (rs, rowNum) -> {
+
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setName(rs.getString("name"));
+        user.setEmail(rs.getString("email"));
+        user.setLogin(rs.getString("login"));
+        user.setBirthday(rs.getDate("birthday").toLocalDate());
+
+        return user;
+    };
 }
