@@ -32,7 +32,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User addUser(User user) {
+    public Integer addUser(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -45,8 +45,7 @@ public class UserDaoImpl implements UserDao {
             return ps;
         }, keyHolder);
 
-        user.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
-        return user;
+        return Objects.requireNonNull(keyHolder.getKey()).intValue();
     }
 
     @Override
