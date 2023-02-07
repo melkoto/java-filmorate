@@ -1,6 +1,7 @@
 package ru.yandex.practicum.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,4 +30,11 @@ public class ErrorHandler {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ErrorResponse(NOT_FOUND.value(), e.getMessage()), NOT_FOUND);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> catchDuplicateException(final DuplicateKeyException e) {
+        log.error(e.getCause().getLocalizedMessage());
+        return new ResponseEntity<>(new ErrorResponse(BAD_REQUEST.value(), e.getCause().getLocalizedMessage()), BAD_REQUEST);
+    }
+
 }

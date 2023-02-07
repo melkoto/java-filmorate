@@ -33,10 +33,6 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User addUser(User user) {
-        if (areThereDuplicates(user.getLogin(), "login") || areThereDuplicates(user.getEmail(), "email")) {
-            throw new BadRequestException("Пользователь с таким логином или email уже существует");
-        }
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
