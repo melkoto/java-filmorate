@@ -1,7 +1,6 @@
 package ru.yandex.practicum.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -16,7 +15,6 @@ import ru.yandex.practicum.models.Genre;
 import ru.yandex.practicum.models.Mpa;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -170,73 +168,13 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public List<Film> getPopularFilms(int count) {
+    public SqlRowSet getPopularFilms(int count) {
         String sql = "SELECT films.id, films.name, films.description, films.release_date, films.duration, films.mpa_id, COUNT(likes.film_id) AS likes_count " +
                 "FROM films LEFT JOIN likes ON films.id = likes.film_id " +
                 "GROUP BY films.id " +
                 "ORDER BY likes_count DESC " +
                 "LIMIT ?";
 
-        List<Film> films = jdbcTemplate.query(sql, new Object[]{count}, (rs) -> {
-            List<Film> filmsList = new ArrayList<>();
-            while (rs.next()) {
-                Film film = new Film();
-                film.setId(rs.getInt("id"));
-                film.setName(rs.getString("name"));
-                film.setDescription(rs.getString("description"));
-                film.setReleaseDate(rs.getDate("release_date").toLocalDate());
-                film.setDuration(rs.getInt("duration"));
-
-                Mpa mpa = new Mpa();
-                mpa.setId(rs.getInt("mpa_id"));
-                String mpaName = getMpaById(mpa.getId()).get().getName();
-                mpa.setName(mpaName);
-                film.setMpa(mpa);
-
-                filmsList.add(film);
-            }
-            return filmsList;
-        });
-
-        assert films != null;
-        films.forEach(film -> {
-            List<Genre> genresList = jdbcTemplate.query("SELECT genres.id, genres.name FROM genres LEFT JOIN films_genres ON genres.id = films_genres.genre_id WHERE films_genres.film_id = ?", new Object[]{film.getId()}, (rs) -> {
-                List<Genre> genres = new ArrayList<>();
-                while (rs.next()) {
-                    Genre genre = new Genre();
-                    genre.setId(rs.getInt("id"));
-                    genre.setName(rs.getString("name"));
-                    genres.add(genre);
-                }
-                return genres;
-            });
-            Genre[] genres = genresList.toArray(new Genre[0]);
-            film.setGenres(genres);
-        });
-
-        return films;
+        return jdbcTemplate.queryForRowSet(sql, count);
     }
-
-    @NotNull
-    private Film getFilmGenre(List<Genre> genresList, ResultSet rs) throws SQLException {
-        Film film = new Film();
-        film.setId(rs.getInt("id"));
-        film.setName(rs.getString("name"));
-        film.setDescription(rs.getString("description"));
-        film.setReleaseDate(rs.getDate("release_date").toLocalDate());
-        film.setDuration(rs.getInt("duration"));
-
-        Mpa mpa = new Mpa();
-        mpa.setId(rs.getInt("mpa_id"));
-        String mpaName = getMpaById(mpa.getId()).get().getName();
-        mpa.setName(mpaName);
-        film.setMpa(mpa);
-
-        Genre[] genres = genresList.toArray(new Genre[0]);
-        film.setGenres(genres);
-
-        return film;
-    }
-
-
 }

@@ -101,7 +101,15 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(int count) {
-        return filmDao.getPopularFilms(count);
+        List<Film> films = new ArrayList<>();
+        SqlRowSet sqlRowSet = filmDao.getPopularFilms(count);
+
+        while (sqlRowSet.next()) {
+            Film film = buildFilm(sqlRowSet);
+
+            films.add(film);
+        }
+        return films;
     }
 
     private List<Mpa> getMpas() {

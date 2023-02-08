@@ -18,7 +18,7 @@ public interface FilmDao {
 
     void deleteFilm(Long id);
 
-    List<Film> getPopularFilms(int count);
+    SqlRowSet getPopularFilms(int count);
 
     Optional<Mpa> getMpaById(int id);
 
