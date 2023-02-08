@@ -13,8 +13,6 @@ class UserControllerTest {
     @Autowired
     UserService userService;
 
-    @Autowired
-
     @BeforeEach
     void setUp() {
     }
