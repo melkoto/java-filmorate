@@ -15,14 +15,12 @@ public class MpaDaoImpl implements MpaDao {
 
     @Override
     public SqlRowSet getMpaById(int id) {
-        String sql = "SELECT * FROM mpas WHERE id = ?";
-        return jdbcTemplate.queryForRowSet(sql, id);
+        return jdbcTemplate.queryForRowSet("SELECT * FROM mpas WHERE id = ?", id);
     }
 
     @Override
     public SqlRowSet getAllMpas() {
-        String sql = "SELECT * FROM mpas ORDER BY id";
-        return jdbcTemplate.queryForRowSet(sql);
+        return jdbcTemplate.queryForRowSet("SELECT * FROM mpas ORDER BY id");
     }
 
     @Override
