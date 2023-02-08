@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.FilmDao;
 import ru.yandex.practicum.exceptions.BadRequestException;
@@ -51,14 +52,8 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public List<Film> getFilms() {
-        List<Film> result = new ArrayList<>();
-        String sql = "SELECT id FROM films";
-        List<Long> ids = jdbcTemplate.queryForList(sql, Long.class);
-        for (Long id : ids) {
-            result.add(getFilmById(id).get());
-        }
-        return result;
+    public SqlRowSet getFilms() {
+        return jdbcTemplate.queryForRowSet("SELECT * FROM films ORDER BY id");
     }
 
     @Override

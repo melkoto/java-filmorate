@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS films
     description  VARCHAR(200),
     release_date DATE,
     duration     LONG CHECK (duration > 0),
-    genre_id     LONG                       REFERENCES genres (id) ON DELETE SET NULL,
-    mpa_id       LONG                       REFERENCES mpas (id) ON DELETE SET NULL
+    genre_id     INT                        REFERENCES genres (id) ON DELETE SET NULL,
+    mpa_id       INT                        REFERENCES mpas (id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS users

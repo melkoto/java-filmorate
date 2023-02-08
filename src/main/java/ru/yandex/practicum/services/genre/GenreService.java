@@ -7,7 +7,9 @@ import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Genre;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class GenreService {
@@ -17,7 +19,7 @@ public class GenreService {
         this.genreDao = genreDao;
     }
 
-    public Genre getGenreById(long id) {
+    public Genre getGenreById(int id) {
         if (genreDoesNotExist(id)) {
             throw new NotFoundException("Жанр с id " + id + " не найден");
         }
@@ -60,5 +62,18 @@ public class GenreService {
             return genre.getString("name");
         }
         return null;
+    }
+
+    public Set<Genre> getGenresByFilmId(Long filmId) {
+        SqlRowSet genres = genreDao.getGenresByFilmId(filmId);
+        Set<Genre> genresList = new HashSet<>();
+
+        while (genres.next()) {
+            Genre g = new Genre();
+            g.setId(genres.getInt("genre_id"));
+            g.setName(genres.getString("name"));
+            genresList.add(g);
+        }
+        return genresList;
     }
 }

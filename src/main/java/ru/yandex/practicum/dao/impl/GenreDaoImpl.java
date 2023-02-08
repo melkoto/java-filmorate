@@ -14,7 +14,7 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public SqlRowSet getGenreById(long id) {
+    public SqlRowSet getGenreById(int id) {
         return jdbcTemplate.queryForRowSet("SELECT * FROM genres WHERE id = ?", id);
     }
 
@@ -31,5 +31,13 @@ public class GenreDaoImpl implements GenreDao {
     @Override
     public SqlRowSet getGenreNameById(long id) {
         return jdbcTemplate.queryForRowSet("SELECT name FROM genres WHERE id = ?", id);
+    }
+
+    @Override
+    public SqlRowSet getGenresByFilmId(Long filmId) {
+        return jdbcTemplate.queryForRowSet("SELECT fg.GENRE_ID, g.name FROM FILMS_GENRES as fg " +
+                "LEFT JOIN GENRES g on fg.GENRE_ID = g.ID " +
+                "WHERE FILM_ID = ? ORDER BY fg.GENRE_ID", filmId);
+
     }
 }
