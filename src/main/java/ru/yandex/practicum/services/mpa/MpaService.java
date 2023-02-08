@@ -51,14 +51,12 @@ public class MpaService {
     }
 
     public String getMpaNameById(int id) {
-        if (mpaDoesNotExist(id)) {
-            throw new NotFoundException("Mpa с id " + id + " не найден");
-        }
-
         SqlRowSet mpa = mpaDao.getMpaNameById(id);
+
         if (mpa.next()) {
             return mpa.getString("name");
         }
-        return null;
+
+        throw new NotFoundException("Mpa с id " + id + " не найден");
     }
 }

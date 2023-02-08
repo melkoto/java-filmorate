@@ -8,7 +8,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.FilmDao;
-import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.models.Genre;
 
@@ -66,59 +65,17 @@ public class FilmDaoImpl implements FilmDao {
         jdbcTemplate.update("DELETE FROM likes WHERE film_id = ? AND user_id = ?", filmId, userId);
     }
 
-    public void insertFilmGenres(long filmId, List<Integer> genres) {
-        String sql = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
-        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                ps.setLong(1, filmId);
-                ps.setInt(2, genres.get(i));
-            }
-
-            @Override
-            public int getBatchSize() {
-                return genres.size();
-            }
-        });
-    }
-
     @Override
-    public Film updateFilm(Film film) {
-        if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{film.getId()}).next()) {
-            throw new NotFoundException("Фильм с id " + film.getId() + " не найден");
-        }
-
-        List<Integer> genresList = new ArrayList<>();
-        List<Genre> uniqueGenres = new ArrayList<>();
-
+    public void updateFilm(Film film) {
         String sql = "UPDATE films SET name = ?, release_date = ?, description = ?, duration = ?, mpa_id = ? WHERE id = ?";
-        String deleteGenres = "DELETE FROM films_genres WHERE film_id = ?";
-        String insertGenres = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
 
         jdbcTemplate.update(sql, film.getName(), film.getReleaseDate(), film.getDescription(), film.getDuration(), film.getMpa().getId(), film.getId());
-        jdbcTemplate.update(deleteGenres, film.getId());
-
-        String mpaName = jdbcTemplate.queryForObject("SELECT name FROM MPAS WHERE id =?", new Object[]{film.getMpa().getId()}, String.class);
-        film.getMpa().setName(mpaName);
 
         if (film.getGenres() == null) {
-            return film;
+            return;
         }
 
-        for (Genre genre : film.getGenres()) {
-            if (!genresList.contains(genre.getId())) {
-                String genreName = jdbcTemplate.queryForObject("SELECT name FROM genres WHERE id =?", new Object[]{genre.getId()}, String.class);
-                genresList.add(genre.getId());
-                jdbcTemplate.update(insertGenres, film.getId(), genre.getId());
-                genre.setName(genreName);
-
-                uniqueGenres.add(genre);
-            }
-        }
-
-        film.setGenres(uniqueGenres.toArray(new Genre[0]));
-
-        return film;
+        updateFilmGenres(film);
     }
 
     @Override
@@ -140,6 +97,42 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public boolean filmDoesNotExist(long id) {
-        return !jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{id}).next();
+        return !jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id = ?", new Object[]{id}).next();
+    }
+
+    public void insertFilmGenres(long filmId, List<Integer> genres) {
+        String sql = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setLong(1, filmId);
+                ps.setInt(2, genres.get(i));
+            }
+
+            @Override
+            public int getBatchSize() {
+                return genres.size();
+            }
+        });
+    }
+
+    private void updateFilmGenres(Film film) {
+        String deleteGenres = "DELETE FROM films_genres WHERE film_id = ?";
+        String insertGenres = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
+
+        jdbcTemplate.update(deleteGenres, film.getId());
+
+        if (film.getGenres() == null) {
+            return;
+        }
+
+        List<Integer> genres = new ArrayList<>();
+        for (Genre genre : film.getGenres()) {
+            if (!genres.contains(genre.getId())) {
+                genres.add(genre.getId());
+            }
+        }
+
+        insertFilmGenres(film.getId(), genres);
     }
 }

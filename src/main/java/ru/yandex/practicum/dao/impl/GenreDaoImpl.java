@@ -40,4 +40,11 @@ public class GenreDaoImpl implements GenreDao {
                 "WHERE FILM_ID = ? ORDER BY fg.GENRE_ID", filmId);
 
     }
+
+    @Override
+    public SqlRowSet getUniqueGenresByFilmId(Long filmId) {
+        return jdbcTemplate.queryForRowSet("SELECT DISTINCT fg.GENRE_ID, g.name FROM FILMS_GENRES as fg " +
+                "LEFT JOIN GENRES g on fg.GENRE_ID = g.ID " +
+                "WHERE FILM_ID = ? ORDER BY fg.GENRE_ID", filmId);
+    }
 }

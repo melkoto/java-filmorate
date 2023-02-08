@@ -10,7 +10,6 @@ import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.models.Genre;
-import ru.yandex.practicum.models.Mpa;
 import ru.yandex.practicum.services.genre.GenreService;
 import ru.yandex.practicum.services.mpa.MpaService;
 
@@ -85,29 +84,46 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
-        return filmDao.updateFilm(film);
+        if (filmDoesNotExist(film.getId())) {
+            throw new NotFoundException("Фильм с id " + film.getId() + " не найден");
+        }
+
+        filmDao.updateFilm(film);
+
+        film.setGenres(genreService.getUniqueGenresByFilmId(film.getId()).toArray(new Genre[0]));
+        film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
+
+        return film;
     }
 
     public void deleteFilm(Long id) {
+        if (filmDoesNotExist(id)) {
+            throw new NotFoundException("Фильм с id " + id + " не найден");
+        }
+
         filmDao.deleteFilm(id);
     }
 
     public void likeFilm(long filmId, long userId) {
-        if (filmDoesNotExist(filmId))
+        if (filmDoesNotExist(filmId)) {
             throw new NotFoundException("Фильм с id " + filmId + " не найден");
+        }
 
-        if (filmDoesNotExist(userId))
+        if (filmDoesNotExist(userId)) {
             throw new NotFoundException("Пользователь с id " + userId + " не найден");
+        }
 
         filmDao.likeFilm(filmId, userId);
     }
 
     public void removeLike(long filmId, long userId) {
-        if (filmDoesNotExist(filmId))
+        if (filmDoesNotExist(filmId)) {
             throw new NotFoundException("Фильм с id " + filmId + " не найден");
+        }
 
-        if (filmDoesNotExist(userId))
+        if (filmDoesNotExist(userId)) {
             throw new NotFoundException("Пользователь с id " + userId + " не найден");
+        }
 
         filmDao.removeLike(filmId, userId);
     }
@@ -122,10 +138,6 @@ public class FilmService {
             films.add(film);
         }
         return films;
-    }
-
-    private List<Mpa> getMpas() {
-        return mpaService.getAllMpas();
     }
 
     @NotNull

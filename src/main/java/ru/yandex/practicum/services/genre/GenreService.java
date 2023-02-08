@@ -76,4 +76,17 @@ public class GenreService {
         }
         return genresList;
     }
+
+    public List<Genre> getUniqueGenresByFilmId(Long filmId) {
+        SqlRowSet genres = genreDao.getGenresByFilmId(filmId);
+        List<Genre> genresList = new ArrayList<>();
+
+        while (genres.next()) {
+            Genre g = new Genre();
+            g.setId(genres.getInt("genre_id"));
+            g.setName(genres.getString("name"));
+            genresList.add(g);
+        }
+        return genresList;
+    }
 }

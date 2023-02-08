@@ -12,7 +12,7 @@ public interface FilmDao {
 
     SqlRowSet getFilmById(Long id);
 
-    Film updateFilm(Film film);
+    void updateFilm(Film film);
 
     void deleteFilm(Long id);
 

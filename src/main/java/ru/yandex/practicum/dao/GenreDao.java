@@ -12,4 +12,6 @@ public interface GenreDao {
     SqlRowSet getGenreNameById(long id);
 
     SqlRowSet getGenresByFilmId(Long filmId);
+
+    SqlRowSet getUniqueGenresByFilmId(Long filmId);
 }
