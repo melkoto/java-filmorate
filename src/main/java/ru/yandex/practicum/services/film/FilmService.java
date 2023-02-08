@@ -74,23 +74,6 @@ public class FilmService {
         return films;
     }
 
-    @NotNull
-    private Film buildFilm(SqlRowSet sqlRowSet) {
-        Film film = new Film();
-        film.setId(sqlRowSet.getLong("id"));
-        film.setName(sqlRowSet.getString("name"));
-        film.setDescription(sqlRowSet.getString("description"));
-        film.setReleaseDate(Objects.requireNonNull(sqlRowSet.getDate("release_date")).toLocalDate());
-        film.setDuration(sqlRowSet.getInt("duration"));
-
-        film.setMpa(mpaService.getMpaById(sqlRowSet.getInt("mpa_id")));
-        Set<Genre> currGenres = genreService.getGenresByFilmId(sqlRowSet.getLong("id"));
-
-        Genre[] allGenres = new Genre[currGenres.size()];
-        film.setGenres(currGenres.toArray(allGenres));
-        return film;
-    }
-
     public Film getFilmById(Long id) {
         SqlRowSet sqlRowSet = filmDao.getFilmById(id);
 
@@ -123,5 +106,22 @@ public class FilmService {
 
     private List<Mpa> getMpas() {
         return mpaService.getAllMpas();
+    }
+
+    @NotNull
+    private Film buildFilm(SqlRowSet sqlRowSet) {
+        Film film = new Film();
+        film.setId(sqlRowSet.getLong("id"));
+        film.setName(sqlRowSet.getString("name"));
+        film.setDescription(sqlRowSet.getString("description"));
+        film.setReleaseDate(Objects.requireNonNull(sqlRowSet.getDate("release_date")).toLocalDate());
+        film.setDuration(sqlRowSet.getInt("duration"));
+
+        film.setMpa(mpaService.getMpaById(sqlRowSet.getInt("mpa_id")));
+        Set<Genre> currGenres = genreService.getGenresByFilmId(sqlRowSet.getLong("id"));
+
+        Genre[] allGenres = new Genre[currGenres.size()];
+        film.setGenres(currGenres.toArray(allGenres));
+        return film;
     }
 }
