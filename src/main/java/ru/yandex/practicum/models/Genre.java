@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Genre {
-    private long id;
+    private int id;
     private String name;
 }

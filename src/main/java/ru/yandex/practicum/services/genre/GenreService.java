@@ -49,4 +49,16 @@ public class GenreService {
     public Boolean genreDoesNotExist(long id) {
         return genreDao.genreDoesNotExist(id);
     }
+
+    public String getGenreNameById(long id) {
+        if (genreDoesNotExist(id)) {
+            throw new NotFoundException("Жанр с id " + id + " не найден");
+        }
+
+        SqlRowSet genre = genreDao.getGenreNameById(id);
+        if (genre.next()) {
+            return genre.getString("name");
+        }
+        return null;
+    }
 }

@@ -8,4 +8,6 @@ public interface MpaDao {
     SqlRowSet getAllMpas();
 
     Boolean mpaDoesNotExist(int id);
+
+    SqlRowSet getMpaNameById(int id);
 }

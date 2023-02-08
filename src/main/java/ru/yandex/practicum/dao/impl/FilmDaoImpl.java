@@ -2,10 +2,10 @@ package ru.yandex.practicum.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.FilmDao;
 import ru.yandex.practicum.exceptions.BadRequestException;
@@ -33,11 +33,7 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public Film addFilm(Film film) {
-        if (!jdbcTemplate.queryForRowSet("SELECT * FROM MPAS WHERE id =?", new Object[]{film.getMpa().getId()}).next()) {
-            throw new BadRequestException("Возрастной рейтинг с id " + film.getMpa().getId() + " не найден");
-        }
-
+    public Integer addFilm(Film film) {
         String insertFilm = "INSERT INTO films (name, release_date, description, duration, mpa_id) " + "VALUES (?, ?, ?, ?, ?)";
 
         KeyHolder filmKeyHolder = new GeneratedKeyHolder();
@@ -51,28 +47,7 @@ public class FilmDaoImpl implements FilmDao {
             return ps;
         }, filmKeyHolder);
 
-        long filmId = Objects.requireNonNull(filmKeyHolder.getKey()).longValue();
-        film.setId(filmId);
-        String mpaName = jdbcTemplate.queryForObject("SELECT name FROM MPAS WHERE id =?", new Object[]{film.getMpa().getId()}, String.class);
-
-        film.getMpa().setName(mpaName);
-
-        if (film.getGenres() != null) {
-            String insertFilmGenre = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
-            for (Genre genre : film.getGenres()) {
-
-                SqlRowSet genreId = jdbcTemplate.queryForRowSet("SELECT id FROM genres WHERE id = ?", genre.getId());
-                if (!genreId.next()) {
-                    throw new BadRequestException("Жанр с id " + genre.getId() + " не найден");
-                }
-
-                String name = jdbcTemplate.queryForObject("SELECT name FROM genres WHERE id = ?", String.class, genre.getId());
-                genre.setName(name);
-                jdbcTemplate.update(insertFilmGenre, filmId, genre.getId());
-            }
-        }
-
-        return film;
+        return Objects.requireNonNull(filmKeyHolder.getKey()).intValue();
     }
 
     @Override
@@ -113,7 +88,7 @@ public class FilmDaoImpl implements FilmDao {
         return Optional.ofNullable(film);
     }
 
-    public Optional<Mpa> getMpaById(Long id) {
+    public Optional<Mpa> getMpaById(int id) {
         if (!jdbcTemplate.queryForRowSet("SELECT * FROM MPAS WHERE id =?", new Object[]{id}).next()) {
             throw new BadRequestException("Возрастной рейтинг с id " + id + " не найден");
         }
@@ -160,13 +135,29 @@ public class FilmDaoImpl implements FilmDao {
         jdbcTemplate.update("DELETE FROM likes WHERE film_id = ? AND user_id = ?", filmId, userId);
     }
 
+    public void insertFilmGenres(long filmId, List<Integer> genres) {
+        String sql = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setLong(1, filmId);
+                ps.setInt(2, genres.get(i));
+            }
+
+            @Override
+            public int getBatchSize() {
+                return genres.size();
+            }
+        });
+    }
+
     @Override
     public Film updateFilm(Film film) {
         if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{film.getId()}).next()) {
             throw new NotFoundException("Фильм с id " + film.getId() + " не найден");
         }
 
-        List<Long> genresList = new ArrayList<>();
+        List<Integer> genresList = new ArrayList<>();
         List<Genre> uniqueGenres = new ArrayList<>();
 
         String sql = "UPDATE films SET name = ?, release_date = ?, description = ?, duration = ?, mpa_id = ? WHERE id = ?";
@@ -278,4 +269,6 @@ public class FilmDaoImpl implements FilmDao {
 
         return film;
     }
+
+
 }

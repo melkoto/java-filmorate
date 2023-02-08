@@ -8,4 +8,6 @@ public interface GenreDao {
     SqlRowSet getGenres();
 
     Boolean genreDoesNotExist(long id);
+
+    SqlRowSet getGenreNameById(long id);
 }

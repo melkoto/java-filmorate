@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FilmDao {
-    Film addFilm(Film film);
+    Integer addFilm(Film film);
 
     List<Film> getFilms();
 
@@ -19,9 +19,11 @@ public interface FilmDao {
 
     List<Film> getPopularFilms(int count);
 
-    Optional<Mpa> getMpaById(Long id);
+    Optional<Mpa> getMpaById(int id);
 
     void likeFilm(long filmId, long userId);
 
     void removeLike(long filmId, long userId);
+
+    void insertFilmGenres(long filmId, List<Integer> batchArgs);
 }

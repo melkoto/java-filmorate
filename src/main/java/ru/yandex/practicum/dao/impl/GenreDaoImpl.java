@@ -27,4 +27,9 @@ public class GenreDaoImpl implements GenreDao {
     public Boolean genreDoesNotExist(long id) {
         return !jdbcTemplate.queryForRowSet("SELECT * FROM genres WHERE id =?", new Object[]{id}).next();
     }
+
+    @Override
+    public SqlRowSet getGenreNameById(long id) {
+        return jdbcTemplate.queryForRowSet("SELECT name FROM genres WHERE id = ?", id);
+    }
 }

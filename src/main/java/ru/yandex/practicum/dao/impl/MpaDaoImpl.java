@@ -27,4 +27,9 @@ public class MpaDaoImpl implements MpaDao {
     public Boolean mpaDoesNotExist(int id) {
         return !jdbcTemplate.queryForRowSet("SELECT * FROM mpas WHERE id =?", new Object[]{id}).next();
     }
+
+    @Override
+    public SqlRowSet getMpaNameById(int id) {
+        return jdbcTemplate.queryForRowSet("SELECT name FROM mpas WHERE id = ?", id);
+    }
 }
