@@ -17,14 +17,6 @@ public class FilmService {
         this.filmDao = filmDao;
     }
 
-    public void likeFilm(long filmId, long userId) {
-        filmDao.likeFilm(filmId, userId);
-    }
-
-    public void removeLike(long filmId, long userId) {
-        filmDao.removeLike(filmId, userId);
-    }
-
     public Film addFilm(Film film) {
         return filmDao.addFilm(film);
     }
@@ -39,6 +31,18 @@ public class FilmService {
 
     public Film updateFilm(Film film) {
         return filmDao.updateFilm(film);
+    }
+
+    public Film deleteFilm(Long id) {
+        return filmDao.deleteFilm(id);
+    }
+
+    public void likeFilm(long filmId, long userId) {
+        filmDao.likeFilm(filmId, userId);
+    }
+
+    public void removeLike(long filmId, long userId) {
+        filmDao.removeLike(filmId, userId);
     }
 
     public List<Film> getPopularFilms(int count) {

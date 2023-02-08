@@ -1,11 +1,11 @@
 package ru.yandex.practicum.dao;
 
-import ru.yandex.practicum.models.Mpa;
-
-import java.util.List;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 public interface MpaDao {
-    Mpa getMpaById(int id);
+    SqlRowSet getMpaById(int id);
 
-    List<Mpa> getAllMpas();
+    SqlRowSet getAllMpas();
+
+    Boolean mpaDoesNotExist(int id);
 }

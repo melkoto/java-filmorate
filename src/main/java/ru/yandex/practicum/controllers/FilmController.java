@@ -22,11 +22,6 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    @GetMapping
-    public List<Film> getFilms() {
-        return filmService.getFilms();
-    }
-
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
         LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
@@ -36,6 +31,16 @@ public class FilmController {
         }
 
         return filmService.addFilm(film);
+    }
+
+    @GetMapping
+    public List<Film> getFilms() {
+        return filmService.getFilms();
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Film> getFilmById(@PathVariable long id) {
+        return filmService.getFilmById(id);
     }
 
     @PutMapping
@@ -49,9 +54,9 @@ public class FilmController {
         return filmService.updateFilm(film);
     }
 
-    @GetMapping("/{id}")
-    public Optional<Film> getFilmById(@PathVariable long id) {
-        return filmService.getFilmById(id);
+    @DeleteMapping("/{id}")
+    public Film deleteFilm(@PathVariable long id) {
+        return filmService.deleteFilm(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
