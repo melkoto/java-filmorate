@@ -57,30 +57,8 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public Optional<Film> getFilmById(Long id) {
-        if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{id}).next()) {
-            throw new NotFoundException("Фильм с id " + id + " не найден");
-        }
-
-        String filmSql = "SELECT * FROM films WHERE id = ?";
-        String genresSql = "SELECT g.* FROM genres g JOIN films_genres fg ON g.id = fg.genre_id WHERE fg.film_id = ?";
-
-        List<Genre> genresList = jdbcTemplate.query(genresSql, new Object[]{id}, (rs, rowNum) -> {
-            Genre genre = new Genre();
-            genre.setId(rs.getInt("id"));
-            genre.setName(rs.getString("name"));
-            return genre;
-        });
-
-        Film film = jdbcTemplate.query(filmSql, new Object[]{id}, (rs) -> {
-            if (rs.next()) {
-                return getFilmGenre(genresList, rs);
-            } else {
-                throw new BadRequestException("Фильм с id " + id + " не найден");
-            }
-        });
-
-        return Optional.ofNullable(film);
+    public SqlRowSet getFilmById(Long id) {
+        return jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id = ?", id);
     }
 
     public Optional<Mpa> getMpaById(int id) {
@@ -186,14 +164,11 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public Film deleteFilm(Long id) {
-        Film film = getFilmById(id).orElseThrow(() -> new BadRequestException("Фильм с id " + id + " не найден"));
-
+    public void deleteFilm(Long id) {
         String sql = "DELETE FROM films WHERE id = ?";
         String deleteGenres = "DELETE FROM films_genres WHERE film_id = ?";
         jdbcTemplate.update(deleteGenres, id);
         jdbcTemplate.update(sql, id);
-        return film;
     }
 
     @Override

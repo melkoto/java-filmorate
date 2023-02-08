@@ -12,11 +12,11 @@ public interface FilmDao {
 
     SqlRowSet getFilms();
 
-    Optional<Film> getFilmById(Long id);
+    SqlRowSet getFilmById(Long id);
 
     Film updateFilm(Film film);
 
-    Film deleteFilm(Long id);
+    void deleteFilm(Long id);
 
     List<Film> getPopularFilms(int count);
 

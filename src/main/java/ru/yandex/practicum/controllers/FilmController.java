@@ -10,7 +10,6 @@ import ru.yandex.practicum.utils.Constants;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("films")
@@ -39,7 +38,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Film> getFilmById(@PathVariable long id) {
+    public Film getFilmById(@PathVariable long id) {
         return filmService.getFilmById(id);
     }
 
@@ -55,8 +54,8 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}")
-    public Film deleteFilm(@PathVariable long id) {
-        return filmService.deleteFilm(id);
+    public void deleteFilm(@PathVariable long id) {
+        filmService.deleteFilm(id);
     }
 
     @PutMapping("/{id}/like/{userId}")

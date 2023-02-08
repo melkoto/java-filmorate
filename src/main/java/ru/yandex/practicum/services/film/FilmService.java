@@ -1,18 +1,23 @@
 package ru.yandex.practicum.services.film;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.dao.FilmDao;
 import ru.yandex.practicum.exceptions.BadRequestException;
+import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.models.Genre;
 import ru.yandex.practicum.models.Mpa;
 import ru.yandex.practicum.services.genre.GenreService;
 import ru.yandex.practicum.services.mpa.MpaService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -61,18 +66,7 @@ public class FilmService {
         SqlRowSet sqlRowSet = filmDao.getFilms();
 
         while (sqlRowSet.next()) {
-            Film film = new Film();
-            film.setId(sqlRowSet.getLong("id"));
-            film.setName(sqlRowSet.getString("name"));
-            film.setDescription(sqlRowSet.getString("description"));
-            film.setReleaseDate(Objects.requireNonNull(sqlRowSet.getDate("release_date")).toLocalDate());
-            film.setDuration(sqlRowSet.getInt("duration"));
-
-            film.setMpa(mpaService.getMpaById(sqlRowSet.getInt("mpa_id")));
-            Set<Genre> currGenres = genreService.getGenresByFilmId(sqlRowSet.getLong("id"));
-
-            Genre[] allGenres = new Genre[currGenres.size()];
-            film.setGenres(currGenres.toArray(allGenres));
+            Film film = buildFilm(sqlRowSet);
 
             films.add(film);
         }
@@ -80,16 +74,39 @@ public class FilmService {
         return films;
     }
 
-    public Optional<Film> getFilmById(Long id) {
-        return filmDao.getFilmById(id);
+    @NotNull
+    private Film buildFilm(SqlRowSet sqlRowSet) {
+        Film film = new Film();
+        film.setId(sqlRowSet.getLong("id"));
+        film.setName(sqlRowSet.getString("name"));
+        film.setDescription(sqlRowSet.getString("description"));
+        film.setReleaseDate(Objects.requireNonNull(sqlRowSet.getDate("release_date")).toLocalDate());
+        film.setDuration(sqlRowSet.getInt("duration"));
+
+        film.setMpa(mpaService.getMpaById(sqlRowSet.getInt("mpa_id")));
+        Set<Genre> currGenres = genreService.getGenresByFilmId(sqlRowSet.getLong("id"));
+
+        Genre[] allGenres = new Genre[currGenres.size()];
+        film.setGenres(currGenres.toArray(allGenres));
+        return film;
+    }
+
+    public Film getFilmById(Long id) {
+        SqlRowSet sqlRowSet = filmDao.getFilmById(id);
+
+        if (!sqlRowSet.next()) {
+            throw new NotFoundException("Фильм с id " + id + " не найден");
+        }
+
+        return buildFilm(sqlRowSet);
     }
 
     public Film updateFilm(Film film) {
         return filmDao.updateFilm(film);
     }
 
-    public Film deleteFilm(Long id) {
-        return filmDao.deleteFilm(id);
+    public void deleteFilm(Long id) {
+        filmDao.deleteFilm(id);
     }
 
     public void likeFilm(long filmId, long userId) {
