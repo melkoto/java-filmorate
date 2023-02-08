@@ -9,7 +9,6 @@ import ru.yandex.practicum.services.user.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -37,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable long id) {
+    public User getUserById(@PathVariable long id) {
         return userService.getUserById(id);
     }
 

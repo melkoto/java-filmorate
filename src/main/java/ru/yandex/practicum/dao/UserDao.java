@@ -1,24 +1,30 @@
 package ru.yandex.practicum.dao;
 
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import ru.yandex.practicum.models.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserDao {
     Integer addUser(User user);
 
     List<User> getUsers();
 
-    Optional<User> getUserById(Long id);
+    SqlRowSet getUserById(Long id);
 
     User updateUser(User user);
 
-    User deleteUser(Long id);
+    void deleteUser(Long id);
 
     String addFriend(Long userId, Long friendId);
 
     String removeFriend(Long userId, Long friendId);
 
-    List<User> getFriends(Long userId);
+    SqlRowSet getFriends(Long userId);
+
+    Boolean hasRequest(Long userId, Long friendId);
+
+    Boolean userDoesNotExist(Long userId);
+
+    void acceptRequest(Long userId, Long friendId);
 }
