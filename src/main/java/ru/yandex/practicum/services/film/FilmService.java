@@ -93,10 +93,22 @@ public class FilmService {
     }
 
     public void likeFilm(long filmId, long userId) {
+        if (filmDoesNotExist(filmId))
+            throw new NotFoundException("Фильм с id " + filmId + " не найден");
+
+        if (filmDoesNotExist(userId))
+            throw new NotFoundException("Пользователь с id " + userId + " не найден");
+
         filmDao.likeFilm(filmId, userId);
     }
 
     public void removeLike(long filmId, long userId) {
+        if (filmDoesNotExist(filmId))
+            throw new NotFoundException("Фильм с id " + filmId + " не найден");
+
+        if (filmDoesNotExist(userId))
+            throw new NotFoundException("Пользователь с id " + userId + " не найден");
+
         filmDao.removeLike(filmId, userId);
     }
 
@@ -131,5 +143,9 @@ public class FilmService {
         Genre[] allGenres = new Genre[currGenres.size()];
         film.setGenres(currGenres.toArray(allGenres));
         return film;
+    }
+
+    public boolean filmDoesNotExist(Long id) {
+        return filmDao.filmDoesNotExist(id);
     }
 }

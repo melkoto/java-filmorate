@@ -23,4 +23,6 @@ public interface FilmDao {
     void removeLike(long filmId, long userId);
 
     void insertFilmGenres(long filmId, List<Integer> batchArgs);
+
+    boolean filmDoesNotExist(long id);
 }

@@ -58,27 +58,11 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public void likeFilm(long filmId, long userId) {
-        if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{filmId}).next()) {
-            throw new NotFoundException("Фильм с id " + filmId + " не найден");
-        }
-
-        if (!jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE id =?", new Object[]{userId}).next()) {
-            throw new NotFoundException("Пользователь с id " + userId + " не найден");
-        }
-
         jdbcTemplate.update("INSERT INTO likes (film_id, user_id) VALUES (?, ?)", filmId, userId);
     }
 
     @Override
     public void removeLike(long filmId, long userId) {
-        if (!jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{filmId}).next()) {
-            throw new NotFoundException("Фильм с id " + filmId + " не найден");
-        }
-
-        if (!jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE id =?", new Object[]{userId}).next()) {
-            throw new NotFoundException("Пользователь с id " + userId + " не найден");
-        }
-
         jdbcTemplate.update("DELETE FROM likes WHERE film_id = ? AND user_id = ?", filmId, userId);
     }
 
@@ -152,5 +136,10 @@ public class FilmDaoImpl implements FilmDao {
                 "LIMIT ?";
 
         return jdbcTemplate.queryForRowSet(sql, count);
+    }
+
+    @Override
+    public boolean filmDoesNotExist(long id) {
+        return !jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id =?", new Object[]{id}).next();
     }
 }
