@@ -1,11 +1,11 @@
 package ru.yandex.practicum.dao;
 
-import ru.yandex.practicum.models.Genre;
-
-import java.util.List;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 public interface GenreDao {
-    Genre getGenreById(long id);
+    SqlRowSet getGenreById(long id);
 
-    List<Genre> getGenres();
+    SqlRowSet getGenres();
+
+    Boolean genreDoesNotExist(long id);
 }
