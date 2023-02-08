@@ -8,11 +8,9 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.FilmDao;
-import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.models.Genre;
-import ru.yandex.practicum.models.Mpa;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -20,7 +18,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -57,27 +54,6 @@ public class FilmDaoImpl implements FilmDao {
     @Override
     public SqlRowSet getFilmById(Long id) {
         return jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id = ?", id);
-    }
-
-    public Optional<Mpa> getMpaById(int id) {
-        if (!jdbcTemplate.queryForRowSet("SELECT * FROM MPAS WHERE id =?", new Object[]{id}).next()) {
-            throw new BadRequestException("Возрастной рейтинг с id " + id + " не найден");
-        }
-
-        String sql = "SELECT * FROM mpas WHERE id = ?";
-
-        Mpa mpa = jdbcTemplate.query(sql, new Object[]{id}, (rs) -> {
-            if (rs.next()) {
-                Mpa m = new Mpa();
-                m.setId(rs.getInt("id"));
-                m.setName(rs.getString("name"));
-                return m;
-            } else {
-                throw new BadRequestException("Возрастной рейтинг с id " + id + " не найден");
-            }
-        });
-
-        return Optional.ofNullable(mpa);
     }
 
     @Override
