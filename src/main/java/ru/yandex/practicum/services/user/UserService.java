@@ -130,8 +130,6 @@ public class UserService {
             friends.add(friend);
         }
 
-        log.error("friends: {}", friends);
-
         return friends;
     }
 
