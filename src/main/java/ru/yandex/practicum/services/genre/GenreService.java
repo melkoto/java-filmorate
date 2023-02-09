@@ -30,16 +30,7 @@ public class GenreService {
     }
 
     public List<Genre> getGenres() {
-        SqlRowSet genres = genreDao.getGenres();
-        List<Genre> genresList = new ArrayList<>();
-
-        while (genres.next()) {
-            Genre g = new Genre();
-            g.setId(genres.getInt("id"));
-            g.setName(genres.getString("name"));
-            genresList.add(g);
-        }
-        return genresList;
+        return genreDao.getGenres();
     }
 
     public Boolean genreDoesNotExist(long id) {
