@@ -46,24 +46,6 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public Boolean genreDoesNotExist(long id) {
-        return !jdbcTemplate.queryForRowSet("SELECT * FROM genres WHERE id =?", new Object[]{id}).next();
-    }
-
-    @Override
-    public String getGenreNameById(long id) {
-        String sql = "SELECT name FROM genres WHERE id = ?";
-
-        SqlRowSet genre = jdbcTemplate.queryForRowSet(sql, id);
-
-        if (genre.next()) {
-            return genre.getString("name");
-        }
-
-        return null;
-    }
-
-    @Override
     public Set<Genre> getGenresByFilmId(Long filmId) {
         String sql = "SELECT fg.GENRE_ID, g.name FROM FILMS_GENRES as fg " +
                 "LEFT JOIN GENRES g on fg.GENRE_ID = g.ID " +

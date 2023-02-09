@@ -10,6 +10,4 @@ public interface MpaDao {
     List<Mpa> getAllMpas();
 
     Boolean mpaDoesNotExist(int id);
-
-    String getMpaNameById(int id);
 }

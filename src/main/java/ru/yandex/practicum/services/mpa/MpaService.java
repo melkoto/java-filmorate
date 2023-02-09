@@ -30,13 +30,4 @@ public class MpaService {
     public Boolean mpaDoesNotExist(int id) {
         return mpaDao.mpaDoesNotExist(id);
     }
-
-    public String getMpaNameById(int id) {
-        String name = mpaDao.getMpaNameById(id);
-
-        if (name == null) {
-            throw new NotFoundException("Mpa с id " + id + " не найден");
-        }
-        return name;
-    }
 }

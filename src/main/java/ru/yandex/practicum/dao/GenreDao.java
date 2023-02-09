@@ -11,10 +11,6 @@ public interface GenreDao {
 
     List<Genre> getGenres();
 
-    Boolean genreDoesNotExist(long id);
-
-    String getGenreNameById(long id);
-
     Set<Genre> getGenresByFilmId(Long filmId);
 
     SqlRowSet getUniqueGenresByFilmId(Long filmId);

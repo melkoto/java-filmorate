@@ -31,20 +31,6 @@ public class GenreService {
         return genreDao.getGenres();
     }
 
-    public Boolean genreDoesNotExist(long id) {
-        return genreDao.genreDoesNotExist(id);
-    }
-
-    public String getGenreNameById(long id) {
-        String name = genreDao.getGenreNameById(id);
-
-        if (name == null) {
-            throw new NotFoundException("Жанр с id " + id + " не найден");
-        }
-
-        return name;
-    }
-
     public Set<Genre> getGenresByFilmId(Long filmId) {
         return genreDao.getGenresByFilmId(filmId);
     }
