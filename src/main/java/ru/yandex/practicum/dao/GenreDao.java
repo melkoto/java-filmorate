@@ -12,7 +12,7 @@ public interface GenreDao {
 
     Boolean genreDoesNotExist(long id);
 
-    SqlRowSet getGenreNameById(long id);
+    String getGenreNameById(long id);
 
     SqlRowSet getGenresByFilmId(Long filmId);
 

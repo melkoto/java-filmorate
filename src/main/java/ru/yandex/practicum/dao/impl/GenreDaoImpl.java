@@ -56,8 +56,16 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public SqlRowSet getGenreNameById(long id) {
-        return jdbcTemplate.queryForRowSet("SELECT name FROM genres WHERE id = ?", id);
+    public String getGenreNameById(long id) {
+        String sql = "SELECT name FROM genres WHERE id = ?";
+
+        SqlRowSet genre = jdbcTemplate.queryForRowSet(sql, id);
+
+        if (genre.next()) {
+            return genre.getString("name");
+        }
+
+        return null;
     }
 
     @Override

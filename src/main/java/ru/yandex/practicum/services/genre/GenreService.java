@@ -38,15 +38,13 @@ public class GenreService {
     }
 
     public String getGenreNameById(long id) {
-        if (genreDoesNotExist(id)) {
+        String name = genreDao.getGenreNameById(id);
+
+        if (name == null) {
             throw new NotFoundException("Жанр с id " + id + " не найден");
         }
 
-        SqlRowSet genre = genreDao.getGenreNameById(id);
-        if (genre.next()) {
-            return genre.getString("name");
-        }
-        return null;
+        return name;
     }
 
     public Set<Genre> getGenresByFilmId(Long filmId) {
