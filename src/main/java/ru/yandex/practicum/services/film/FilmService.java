@@ -1,9 +1,7 @@
 package ru.yandex.practicum.services.film;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.dao.FilmDao;
 import ru.yandex.practicum.exceptions.BadRequestException;
@@ -15,8 +13,6 @@ import ru.yandex.practicum.services.mpa.MpaService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -61,15 +57,14 @@ public class FilmService {
     }
 
     public List<Film> getFilms() {
-        List<Film> films = new ArrayList<>();
-        SqlRowSet sqlRowSet = filmDao.getFilms();
+        List<Film> films = filmDao.getFilms();
 
-        while (sqlRowSet.next()) {
-            Film film = buildFilm(sqlRowSet);
+        for (Film film : films) {
+            film.setGenres(genreService.getGenresByFilmId(film.getId()).toArray(new Genre[0]));
+            film.setMpa(mpaService.getMpaByFilmId(film.getId()));
 
-            films.add(film);
         }
-        // films.sort(Comparator.comparing(Film::getId));
+
         return films;
     }
 
@@ -141,23 +136,6 @@ public class FilmService {
         }
 
         return films;
-    }
-
-    @NotNull
-    private Film buildFilm(SqlRowSet sqlRowSet) {
-        Film film = new Film();
-        film.setId(sqlRowSet.getLong("id"));
-        film.setName(sqlRowSet.getString("name"));
-        film.setDescription(sqlRowSet.getString("description"));
-        film.setReleaseDate(Objects.requireNonNull(sqlRowSet.getDate("release_date")).toLocalDate());
-        film.setDuration(sqlRowSet.getInt("duration"));
-
-        film.setMpa(mpaService.getMpaById(sqlRowSet.getInt("mpa_id")));
-        Set<Genre> currGenres = genreService.getGenresByFilmId(sqlRowSet.getLong("id"));
-
-        Genre[] allGenres = new Genre[currGenres.size()];
-        film.setGenres(currGenres.toArray(allGenres));
-        return film;
     }
 
     public boolean filmDoesNotExist(Long id) {

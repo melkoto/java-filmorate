@@ -46,8 +46,19 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public SqlRowSet getFilms() {
-        return jdbcTemplate.queryForRowSet("SELECT * FROM films ORDER BY id");
+    public List<Film> getFilms() {
+        String sql = "SELECT * FROM films ORDER BY id";
+
+        return jdbcTemplate.query(sql, (resultSet, i) -> {
+            Film film = new Film();
+            film.setId(resultSet.getLong("id"));
+            film.setName(resultSet.getString("name"));
+            film.setDescription(resultSet.getString("description"));
+            film.setReleaseDate(Objects.requireNonNull(resultSet.getDate("release_date")).toLocalDate());
+            film.setDuration(resultSet.getInt("duration"));
+
+            return film;
+        });
     }
 
     @Override
@@ -157,5 +168,16 @@ public class FilmDaoImpl implements FilmDao {
         }
 
         insertFilmGenres(film.getId(), genres);
+    }
+
+
+    private Film buildFilm(SqlRowSet sqlRowSet) {
+        Film film = new Film();
+        film.setId(sqlRowSet.getLong("id"));
+        film.setName(sqlRowSet.getString("name"));
+        film.setDescription(sqlRowSet.getString("description"));
+        film.setReleaseDate(Objects.requireNonNull(sqlRowSet.getDate("release_date")).toLocalDate());
+        film.setDuration(sqlRowSet.getInt("duration"));
+        return film;
     }
 }

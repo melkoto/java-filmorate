@@ -1,6 +1,5 @@
 package ru.yandex.practicum.dao;
 
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import ru.yandex.practicum.models.Film;
 
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.List;
 public interface FilmDao {
     Integer addFilm(Film film);
 
-    SqlRowSet getFilms();
+    List<Film> getFilms();
 
     Film getFilmById(Long id);
 
