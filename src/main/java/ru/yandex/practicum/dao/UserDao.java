@@ -10,7 +10,7 @@ public interface UserDao {
 
     List<User> getUsers();
 
-    SqlRowSet getUserById(Long id);
+    User getUserById(Long id);
 
     User updateUser(User user);
 

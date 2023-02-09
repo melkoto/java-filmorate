@@ -37,22 +37,13 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        SqlRowSet userRows = userDao.getUserById(id);
+        User user = userDao.getUserById(id);
 
-        if (userRows.next()) {
-            log.info("Найден пользователь: {} {}", userRows.getString("id"), userRows.getString("name"));
-            User user = new User();
-
-            user.setId(id);
-            user.setName(userRows.getString("name"));
-            user.setEmail(userRows.getString("email"));
-            user.setLogin(userRows.getString("login"));
-            user.setBirthday(Objects.requireNonNull(userRows.getDate("birthday")).toLocalDate());
-            return user;
-        } else {
-            log.info("Пользователь с идентификатором {} не найден.", id);
+        if (user == null) {
             throw new NotFoundException("Пользователь с идентификатором " + id + " не найден.");
         }
+
+        return user;
     }
 
     public User updateUser(User user) {
