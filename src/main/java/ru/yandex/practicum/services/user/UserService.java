@@ -29,10 +29,7 @@ public class UserService {
             user.setName(user.getLogin());
         }
 
-
-        Integer userId = userDao.addUser(user);
-        user.setId(userId.longValue());
-        return user;
+        return userDao.addUser(user);
     }
 
     public List<User> getUsers() {

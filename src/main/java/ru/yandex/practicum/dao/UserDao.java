@@ -6,7 +6,7 @@ import ru.yandex.practicum.models.User;
 import java.util.List;
 
 public interface UserDao {
-    Integer addUser(User user);
+    User addUser(User user);
 
     List<User> getUsers();
 
