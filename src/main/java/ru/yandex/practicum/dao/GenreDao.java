@@ -4,6 +4,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import ru.yandex.practicum.models.Genre;
 
 import java.util.List;
+import java.util.Set;
 
 public interface GenreDao {
     Genre getGenreById(int id);
@@ -14,7 +15,7 @@ public interface GenreDao {
 
     String getGenreNameById(long id);
 
-    SqlRowSet getGenresByFilmId(Long filmId);
+    Set<Genre> getGenresByFilmId(Long filmId);
 
     SqlRowSet getUniqueGenresByFilmId(Long filmId);
 }

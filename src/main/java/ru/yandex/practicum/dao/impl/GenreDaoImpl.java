@@ -7,7 +7,9 @@ import ru.yandex.practicum.dao.GenreDao;
 import ru.yandex.practicum.models.Genre;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class GenreDaoImpl implements GenreDao {
@@ -69,11 +71,22 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public SqlRowSet getGenresByFilmId(Long filmId) {
-        return jdbcTemplate.queryForRowSet("SELECT fg.GENRE_ID, g.name FROM FILMS_GENRES as fg " +
+    public Set<Genre> getGenresByFilmId(Long filmId) {
+        String sql = "SELECT fg.GENRE_ID, g.name FROM FILMS_GENRES as fg " +
                 "LEFT JOIN GENRES g on fg.GENRE_ID = g.ID " +
-                "WHERE FILM_ID = ? ORDER BY fg.GENRE_ID", filmId);
+                "WHERE FILM_ID = ? ORDER BY fg.GENRE_ID";
 
+        Set<Genre> genres = new HashSet<>();
+        SqlRowSet genre = jdbcTemplate.queryForRowSet(sql, filmId);
+
+        while (genre.next()) {
+            Genre g = new Genre();
+            g.setId(genre.getInt("genre_id"));
+            g.setName(genre.getString("name"));
+            genres.add(g);
+        }
+
+        return genres;
     }
 
     @Override

@@ -1,13 +1,11 @@
 package ru.yandex.practicum.services.genre;
 
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.dao.GenreDao;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Genre;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,28 +46,11 @@ public class GenreService {
     }
 
     public Set<Genre> getGenresByFilmId(Long filmId) {
-        SqlRowSet genres = genreDao.getGenresByFilmId(filmId);
-        Set<Genre> genresList = new HashSet<>();
-
-        while (genres.next()) {
-            Genre g = new Genre();
-            g.setId(genres.getInt("genre_id"));
-            g.setName(genres.getString("name"));
-            genresList.add(g);
-        }
-        return genresList;
+        return genreDao.getGenresByFilmId(filmId);
     }
 
     public List<Genre> getUniqueGenresByFilmId(Long filmId) {
-        SqlRowSet genres = genreDao.getGenresByFilmId(filmId);
-        List<Genre> genresList = new ArrayList<>();
-
-        while (genres.next()) {
-            Genre g = new Genre();
-            g.setId(genres.getInt("genre_id"));
-            g.setName(genres.getString("name"));
-            genresList.add(g);
-        }
-        return genresList;
+        Set<Genre> genres = getGenresByFilmId(filmId);
+        return new ArrayList<>(genres);
     }
 }
