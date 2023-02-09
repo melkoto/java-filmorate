@@ -1,6 +1,7 @@
 package ru.yandex.practicum.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -122,7 +123,7 @@ public class FilmDaoImpl implements FilmDao {
         String sql = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
+            public void setValues(@NotNull PreparedStatement ps, int i) throws SQLException {
                 ps.setLong(1, filmId);
                 ps.setInt(2, genres.get(i));
             }

@@ -46,9 +46,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getUsers() {
-        return jdbcTemplate.query("SELECT * FROM users", (rs, rowNum) -> {
-            return buildUser(rs);
-        });
+        return jdbcTemplate.query("SELECT * FROM users", (rs, rowNum) -> buildUser(rs));
     }
 
     @Override
@@ -92,9 +90,7 @@ public class UserDaoImpl implements UserDao {
         String sql = "SELECT * FROM users RIGHT JOIN (" +
                 "(SELECT TO_USER AS users FROM FRIENDS WHERE FROM_USER = ?) UNION (" +
                 "SELECT FROM_USER FROM FRIENDS WHERE TO_USER= ? AND status='accepted')) ON users.id = users";
-        return jdbcTemplate.query(sql, new Object[]{id, id}, (rs, rowNum) -> {
-            return buildUser(rs);
-        });
+        return jdbcTemplate.query(sql, new Object[]{id, id}, (rs, rowNum) -> buildUser(rs));
     }
 
     @Override
