@@ -129,14 +129,14 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(int count) {
-        List<Film> films = new ArrayList<>();
-        SqlRowSet sqlRowSet = filmDao.getPopularFilms(count);
+        List<Film> films = filmDao.getPopularFilms(count);
 
-        while (sqlRowSet.next()) {
-            Film film = buildFilm(sqlRowSet);
+        for (Film film : films) {
+            film.setGenres(genreService.getGenresByFilmId(film.getId()).toArray(new Genre[0]));
+            film.setMpa(mpaService.getMpaByFilmId(film.getId()));
 
-            films.add(film);
         }
+
         return films;
     }
 

@@ -30,4 +30,8 @@ public class MpaService {
     public Boolean mpaDoesNotExist(int id) {
         return mpaDao.mpaDoesNotExist(id);
     }
+
+    public Mpa getMpaByFilmId(Long filmId) {
+        return mpaDao.getMpaByFilmId(filmId);
+    }
 }

@@ -47,4 +47,22 @@ public class MpaDaoImpl implements MpaDao {
     public Boolean mpaDoesNotExist(int id) {
         return !jdbcTemplate.queryForRowSet("SELECT * FROM mpas WHERE id =?", new Object[]{id}).next();
     }
+
+    @Override
+    public Mpa getMpaByFilmId(Long filmId) {
+        String sql = "SELECT mpa_id, m.name FROM FILMS as f " +
+                "LEFT JOIN mpas m on f.mpa_id = m.ID " +
+                "WHERE f.ID = ? ORDER BY f.mpa_id";
+
+        SqlRowSet mpa = jdbcTemplate.queryForRowSet(sql, filmId);
+
+        if (mpa.next()) {
+            Mpa m = new Mpa();
+            m.setId(mpa.getInt("mpa_id"));
+            m.setName(mpa.getString("name"));
+            return m;
+        }
+
+        return null;
+    }
 }

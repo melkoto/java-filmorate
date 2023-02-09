@@ -10,4 +10,6 @@ public interface MpaDao {
     List<Mpa> getAllMpas();
 
     Boolean mpaDoesNotExist(int id);
+
+    Mpa getMpaByFilmId(Long filmId);
 }

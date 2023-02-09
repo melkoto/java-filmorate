@@ -85,14 +85,22 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public SqlRowSet getPopularFilms(int count) {
+    public List<Film> getPopularFilms(int count) {
         String sql = "SELECT films.id, films.name, films.description, films.release_date, films.duration, films.mpa_id, COUNT(likes.film_id) AS likes_count " +
                 "FROM films LEFT JOIN likes ON films.id = likes.film_id " +
                 "GROUP BY films.id " +
                 "ORDER BY likes_count DESC " +
                 "LIMIT ?";
 
-        return jdbcTemplate.queryForRowSet(sql, count);
+        return jdbcTemplate.query(sql, new Object[]{count}, (rs, rowNum) -> {
+            Film film = new Film();
+            film.setId(rs.getLong("id"));
+            film.setName(rs.getString("name"));
+            film.setDescription(rs.getString("description"));
+            film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+            film.setDuration(rs.getInt("duration"));
+            return film;
+        });
     }
 
     @Override

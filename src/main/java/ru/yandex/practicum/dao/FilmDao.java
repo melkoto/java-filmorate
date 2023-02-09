@@ -16,7 +16,7 @@ public interface FilmDao {
 
     void deleteFilm(Long id);
 
-    SqlRowSet getPopularFilms(int count);
+    List<Film> getPopularFilms(int count);
 
     void likeFilm(long filmId, long userId);
 
