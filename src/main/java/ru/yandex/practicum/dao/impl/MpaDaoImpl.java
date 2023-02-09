@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.MpaDao;
+import ru.yandex.practicum.models.Mpa;
 
 @Component
 public class MpaDaoImpl implements MpaDao {
@@ -14,8 +15,19 @@ public class MpaDaoImpl implements MpaDao {
     }
 
     @Override
-    public SqlRowSet getMpaById(int id) {
-        return jdbcTemplate.queryForRowSet("SELECT * FROM mpas WHERE id = ?", id);
+    public Mpa getMpaById(int id) {
+        String sql = "SELECT * FROM mpas WHERE id = ?";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
+
+        if (!rowSet.next()) {
+            return null;
+        }
+
+        Mpa mpa = new Mpa();
+        mpa.setId(rowSet.getInt("id"));
+        mpa.setName(rowSet.getString("name"));
+
+        return mpa;
     }
 
     @Override

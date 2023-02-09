@@ -22,15 +22,7 @@ public class MpaService {
             throw new NotFoundException("Mpa с id " + id + " не найден");
         }
 
-        SqlRowSet mpa = mpaDao.getMpaById(id);
-        Mpa m = new Mpa();
-
-        if (mpa.next()) {
-            m.setId(mpa.getInt("id"));
-            m.setName(mpa.getString("name"));
-            return m;
-        }
-        return m;
+        return mpaDao.getMpaById(id);
     }
 
     public List<Mpa> getAllMpas() {
