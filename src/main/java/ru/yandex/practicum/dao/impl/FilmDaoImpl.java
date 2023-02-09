@@ -12,6 +12,7 @@ import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.models.Genre;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -49,16 +50,7 @@ public class FilmDaoImpl implements FilmDao {
     public List<Film> getFilms() {
         String sql = "SELECT * FROM films ORDER BY id";
 
-        return jdbcTemplate.query(sql, (resultSet, i) -> {
-            Film film = new Film();
-            film.setId(resultSet.getLong("id"));
-            film.setName(resultSet.getString("name"));
-            film.setDescription(resultSet.getString("description"));
-            film.setReleaseDate(Objects.requireNonNull(resultSet.getDate("release_date")).toLocalDate());
-            film.setDuration(resultSet.getInt("duration"));
-
-            return film;
-        });
+        return jdbcTemplate.query(sql, (resultSet, i) -> buildFilm(resultSet));
     }
 
     @Override
@@ -118,15 +110,7 @@ public class FilmDaoImpl implements FilmDao {
                 "ORDER BY likes_count DESC " +
                 "LIMIT ?";
 
-        return jdbcTemplate.query(sql, new Object[]{count}, (rs, rowNum) -> {
-            Film film = new Film();
-            film.setId(rs.getLong("id"));
-            film.setName(rs.getString("name"));
-            film.setDescription(rs.getString("description"));
-            film.setReleaseDate(rs.getDate("release_date").toLocalDate());
-            film.setDuration(rs.getInt("duration"));
-            return film;
-        });
+        return jdbcTemplate.query(sql, new Object[]{count}, (rs, rowNum) -> buildFilm(rs));
     }
 
     @Override
@@ -152,7 +136,6 @@ public class FilmDaoImpl implements FilmDao {
 
     private void updateFilmGenres(Film film) {
         String deleteGenres = "DELETE FROM films_genres WHERE film_id = ?";
-        String insertGenres = "INSERT INTO films_genres (film_id, genre_id) VALUES (?, ?)";
 
         jdbcTemplate.update(deleteGenres, film.getId());
 
@@ -171,13 +154,13 @@ public class FilmDaoImpl implements FilmDao {
     }
 
 
-    private Film buildFilm(SqlRowSet sqlRowSet) {
+    private Film buildFilm(ResultSet rs) throws SQLException {
         Film film = new Film();
-        film.setId(sqlRowSet.getLong("id"));
-        film.setName(sqlRowSet.getString("name"));
-        film.setDescription(sqlRowSet.getString("description"));
-        film.setReleaseDate(Objects.requireNonNull(sqlRowSet.getDate("release_date")).toLocalDate());
-        film.setDuration(sqlRowSet.getInt("duration"));
+        film.setId(rs.getLong("id"));
+        film.setName(rs.getString("name"));
+        film.setDescription(rs.getString("description"));
+        film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+        film.setDuration(rs.getInt("duration"));
         return film;
     }
 }
