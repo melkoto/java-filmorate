@@ -51,8 +51,23 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public SqlRowSet getFilmById(Long id) {
-        return jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE id = ?", id);
+    public Film getFilmById(Long id) {
+        String sql = "SELECT * FROM films WHERE id = ?";
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
+
+        if (!rowSet.next()) {
+            return null;
+        }
+
+        Film film = new Film();
+        film.setId(rowSet.getLong("id"));
+        film.setName(rowSet.getString("name"));
+        film.setDescription(rowSet.getString("description"));
+        film.setReleaseDate(Objects.requireNonNull(rowSet.getDate("release_date")).toLocalDate());
+        film.setDuration(rowSet.getInt("duration"));
+
+        return film;
     }
 
     @Override

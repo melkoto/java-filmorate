@@ -74,13 +74,16 @@ public class FilmService {
     }
 
     public Film getFilmById(Long id) {
-        SqlRowSet sqlRowSet = filmDao.getFilmById(id);
+        Film film = filmDao.getFilmById(id);
 
-        if (!sqlRowSet.next()) {
+        if (film == null) {
             throw new NotFoundException("Фильм с id " + id + " не найден");
         }
 
-        return buildFilm(sqlRowSet);
+        film.setGenres(genreService.getUniqueGenresByFilmId(id).toArray(new Genre[0]));
+        film.setMpa(mpaService.getMpaByFilmId(id));
+
+        return film;
     }
 
     public Film updateFilm(Film film) {

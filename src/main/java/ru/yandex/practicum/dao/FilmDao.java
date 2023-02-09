@@ -10,7 +10,7 @@ public interface FilmDao {
 
     SqlRowSet getFilms();
 
-    SqlRowSet getFilmById(Long id);
+    Film getFilmById(Long id);
 
     void updateFilm(Film film);
 
