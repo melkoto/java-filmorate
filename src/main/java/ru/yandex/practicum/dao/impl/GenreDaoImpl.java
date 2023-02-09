@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.GenreDao;
 import ru.yandex.practicum.models.Genre;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,18 +37,12 @@ public class GenreDaoImpl implements GenreDao {
     @Override
     public List<Genre> getGenres() {
         String sql = "SELECT * FROM genres ORDER BY id";
-
-        SqlRowSet genre = jdbcTemplate.queryForRowSet(sql);
-        List<Genre> genres = new ArrayList<>();
-
-        while (genre.next()) {
-            Genre g = new Genre();
-            g.setId(genre.getInt("id"));
-            g.setName(genre.getString("name"));
-            genres.add(g);
-        }
-
-        return genres;
+        return jdbcTemplate.query(sql, (resultSet, i) -> {
+            Genre genre = new Genre();
+            genre.setId(resultSet.getInt("id"));
+            genre.setName(resultSet.getString("name"));
+            return genre;
+        });
     }
 
     @Override
