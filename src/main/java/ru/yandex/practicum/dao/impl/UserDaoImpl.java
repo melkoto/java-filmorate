@@ -11,6 +11,8 @@ import ru.yandex.practicum.dao.UserDao;
 import ru.yandex.practicum.models.User;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,14 +47,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getUsers() {
         return jdbcTemplate.query("SELECT * FROM users", (rs, rowNum) -> {
-
-            User user = new User();
-            user.setId(rs.getLong("id"));
-            user.setName(rs.getString("name"));
-            user.setEmail(rs.getString("email"));
-            user.setLogin(rs.getString("login"));
-            user.setBirthday(rs.getDate("birthday").toLocalDate());
-            return user;
+            return buildUser(rs);
         });
     }
 
@@ -62,13 +57,7 @@ public class UserDaoImpl implements UserDao {
 
         return jdbcTemplate.query(sql, new Object[]{id}, rs -> {
             if (rs.next()) {
-                User user = new User();
-                user.setId(rs.getLong("id"));
-                user.setName(rs.getString("name"));
-                user.setEmail(rs.getString("email"));
-                user.setLogin(rs.getString("login"));
-                user.setBirthday(rs.getDate("birthday").toLocalDate());
-                return user;
+                return buildUser(rs);
             }
             return null;
         });
@@ -99,11 +88,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public SqlRowSet getFriends(Long id) {
+    public List<User> getFriends(Long id) {
         String sql = "SELECT * FROM users RIGHT JOIN (" +
                 "(SELECT TO_USER AS users FROM FRIENDS WHERE FROM_USER = ?) UNION (" +
                 "SELECT FROM_USER FROM FRIENDS WHERE TO_USER= ? AND status='accepted')) ON users.id = users";
-        return jdbcTemplate.queryForRowSet(sql, id, id);
+        return jdbcTemplate.query(sql, new Object[]{id, id}, (rs, rowNum) -> {
+            return buildUser(rs);
+        });
     }
 
     @Override
@@ -124,5 +115,15 @@ public class UserDaoImpl implements UserDao {
     public void acceptRequest(Long fromUserId, Long toUserId) {
         String sql = "UPDATE friends SET status = ? WHERE from_user = ? AND to_user = ?";
         jdbcTemplate.update(sql, "accepted", toUserId, fromUserId);
+    }
+
+    private User buildUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setName(rs.getString("name"));
+        user.setEmail(rs.getString("email"));
+        user.setLogin(rs.getString("login"));
+        user.setBirthday(rs.getDate("birthday").toLocalDate());
+        return user;
     }
 }

@@ -2,16 +2,13 @@ package ru.yandex.practicum.services.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.dao.UserDao;
 import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.User;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -105,20 +102,7 @@ public class UserService {
             throw new NotFoundException("Пользователь с идентификатором " + userId + " не найден.");
         }
 
-        List<User> friends = new ArrayList<>();
-        SqlRowSet friendRows = userDao.getFriends(userId);
-
-        while (friendRows.next()) {
-            User friend = new User();
-            friend.setId(friendRows.getLong("id"));
-            friend.setName(friendRows.getString("name"));
-            friend.setEmail(friendRows.getString("email"));
-            friend.setLogin(friendRows.getString("login"));
-            friend.setBirthday(Objects.requireNonNull(friendRows.getDate("birthday")).toLocalDate());
-            friends.add(friend);
-        }
-
-        return friends;
+        return userDao.getFriends(userId);
     }
 
     public List<User> getCommonFriends(long userId, long anotherUserId) {
