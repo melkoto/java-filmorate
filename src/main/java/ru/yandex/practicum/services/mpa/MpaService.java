@@ -1,6 +1,5 @@
 package ru.yandex.practicum.services.mpa;
 
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.dao.MpaDao;
 import ru.yandex.practicum.exceptions.NotFoundException;
@@ -33,12 +32,11 @@ public class MpaService {
     }
 
     public String getMpaNameById(int id) {
-        SqlRowSet mpa = mpaDao.getMpaNameById(id);
+        String name = mpaDao.getMpaNameById(id);
 
-        if (mpa.next()) {
-            return mpa.getString("name");
+        if (name == null) {
+            throw new NotFoundException("Mpa с id " + id + " не найден");
         }
-
-        throw new NotFoundException("Mpa с id " + id + " не найден");
+        return name;
     }
 }

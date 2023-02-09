@@ -56,7 +56,15 @@ public class MpaDaoImpl implements MpaDao {
     }
 
     @Override
-    public SqlRowSet getMpaNameById(int id) {
-        return jdbcTemplate.queryForRowSet("SELECT name FROM mpas WHERE id = ?", id);
+    public String getMpaNameById(int id) {
+        String sql = "SELECT name FROM mpas WHERE id = ?";
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
+
+        if (rowSet.next()) {
+            return rowSet.getString("name");
+        }
+
+        return null;
     }
 }
