@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.GenreDao;
+import ru.yandex.practicum.models.Genre;
 
 @Component
 public class GenreDaoImpl implements GenreDao {
@@ -14,8 +15,19 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public SqlRowSet getGenreById(int id) {
-        return jdbcTemplate.queryForRowSet("SELECT * FROM genres WHERE id = ?", id);
+    public Genre getGenreById(int id) {
+        String sql = "SELECT * FROM genres WHERE id = ?";
+
+        SqlRowSet genre = jdbcTemplate.queryForRowSet(sql, id);
+
+        if (genre.next()) {
+            Genre g = new Genre();
+            g.setId(genre.getInt("id"));
+            g.setName(genre.getString("name"));
+            return g;
+        }
+
+        return null;
     }
 
     @Override

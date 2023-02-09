@@ -20,19 +20,13 @@ public class GenreService {
     }
 
     public Genre getGenreById(int id) {
-        if (genreDoesNotExist(id)) {
+        Genre genre = genreDao.getGenreById(id);
+
+        if (genre == null) {
             throw new NotFoundException("Жанр с id " + id + " не найден");
         }
 
-        SqlRowSet genre = genreDao.getGenreById(id);
-        Genre g = new Genre();
-
-        if (genre.next()) {
-            g.setId(genre.getInt("id"));
-            g.setName(genre.getString("name"));
-            return g;
-        }
-        return g;
+        return genre;
     }
 
     public List<Genre> getGenres() {
