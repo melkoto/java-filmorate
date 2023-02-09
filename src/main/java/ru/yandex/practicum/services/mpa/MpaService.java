@@ -6,7 +6,6 @@ import ru.yandex.practicum.dao.MpaDao;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Mpa;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,16 +25,7 @@ public class MpaService {
     }
 
     public List<Mpa> getAllMpas() {
-        SqlRowSet mpas = mpaDao.getAllMpas();
-        List<Mpa> mpaList = new ArrayList<>();
-
-        while (mpas.next()) {
-            Mpa m = new Mpa();
-            m.setId(mpas.getInt("id"));
-            m.setName(mpas.getString("name"));
-            mpaList.add(m);
-        }
-        return mpaList;
+        return mpaDao.getAllMpas();
     }
 
     public Boolean mpaDoesNotExist(int id) {
