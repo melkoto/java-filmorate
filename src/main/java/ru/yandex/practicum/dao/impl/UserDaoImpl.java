@@ -59,19 +59,19 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUserById(Long id) {
         String sql = "SELECT * FROM users WHERE id = ?";
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sql, id);
 
-        if (userRows.next()) {
-            User user = new User();
-            user.setId(userRows.getLong("id"));
-            user.setName(userRows.getString("name"));
-            user.setEmail(userRows.getString("email"));
-            user.setLogin(userRows.getString("login"));
-            user.setBirthday(Objects.requireNonNull(userRows.getDate("birthday")).toLocalDate());
-            return user;
-        }
-
-        return null;
+        return jdbcTemplate.query(sql, new Object[]{id}, rs -> {
+            if (rs.next()) {
+                User user = new User();
+                user.setId(rs.getLong("id"));
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setLogin(rs.getString("login"));
+                user.setBirthday(rs.getDate("birthday").toLocalDate());
+                return user;
+            }
+            return null;
+        });
     }
 
     @Override
