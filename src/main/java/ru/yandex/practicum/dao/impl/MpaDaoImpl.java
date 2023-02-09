@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.MpaDao;
 import ru.yandex.practicum.models.Mpa;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -36,18 +35,12 @@ public class MpaDaoImpl implements MpaDao {
     @Override
     public List<Mpa> getAllMpas() {
         String sql = "SELECT * FROM mpas ORDER BY id";
-        List<Mpa> mpas = new ArrayList<>();
-
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
-
-        while (rowSet.next()) {
+        return jdbcTemplate.query(sql, (resultSet, i) -> {
             Mpa mpa = new Mpa();
-            mpa.setId(rowSet.getInt("id"));
-            mpa.setName(rowSet.getString("name"));
-            mpas.add(mpa);
-        }
-
-        return mpas;
+            mpa.setId(resultSet.getInt("id"));
+            mpa.setName(resultSet.getString("name"));
+            return mpa;
+        });
     }
 
     @Override
