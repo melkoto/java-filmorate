@@ -1,6 +1,5 @@
 package ru.yandex.practicum.dao;
 
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import ru.yandex.practicum.models.Genre;
 
 import java.util.List;
@@ -12,6 +11,4 @@ public interface GenreDao {
     List<Genre> getGenres();
 
     Set<Genre> getGenresByFilmId(Long filmId);
-
-    SqlRowSet getUniqueGenresByFilmId(Long filmId);
 }
