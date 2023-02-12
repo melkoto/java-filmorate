@@ -54,6 +54,17 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
+    public List<Film> getPopularFilms(int count) {
+        String sql = "SELECT films.id, films.name, films.description, films.release_date, films.duration, films.mpa_id, COUNT(likes.film_id) AS likes_count " +
+                "FROM films LEFT JOIN likes ON films.id = likes.film_id " +
+                "GROUP BY films.id " +
+                "ORDER BY likes_count DESC " +
+                "LIMIT ?";
+
+        return jdbcTemplate.query(sql, new Object[]{count}, (rs, rowNum) -> buildFilm(rs));
+    }
+
+    @Override
     public Film getFilmById(Long id) {
         String sql = "SELECT * FROM films LEFT JOIN (SELECT NAME AS MNAME, ID AS MID FROM MPAS) ON FILMS.MPA_ID = MID WHERE FILMS.id = ?";
 
@@ -104,17 +115,6 @@ public class FilmDaoImpl implements FilmDao {
     public void deleteFilm(Long id) {
         jdbcTemplate.update("DELETE FROM films WHERE id = ?", id);
         jdbcTemplate.update("DELETE FROM films_genres WHERE film_id = ?", id);
-    }
-
-    @Override
-    public List<Film> getPopularFilms(int count) {
-        String sql = "SELECT films.id, films.name, films.description, films.release_date, films.duration, films.mpa_id, COUNT(likes.film_id) AS likes_count " +
-                "FROM films LEFT JOIN likes ON films.id = likes.film_id " +
-                "GROUP BY films.id " +
-                "ORDER BY likes_count DESC " +
-                "LIMIT ?";
-
-        return jdbcTemplate.query(sql, new Object[]{count}, (rs, rowNum) -> buildFilm(rs));
     }
 
     @Override

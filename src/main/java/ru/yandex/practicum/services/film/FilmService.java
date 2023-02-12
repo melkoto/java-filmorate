@@ -62,24 +62,13 @@ public class FilmService {
 
     public List<Film> getFilms() {
         List<Film> films = filmDao.getFilms();
-        Map<Long, List<Genre>> genresOfFilms = genreService.getGenresOfFilms();
-        List<Mpa> mpas = mpaService.getAllMpas();
+        updateFilmData(films);
+        return films;
+    }
 
-        for (Film film : films) {
-            film.setMpa(mpas.stream()
-                    .filter(mpa -> mpa.getId() == film.getMpa().getId())
-                    .findFirst()
-                    .get());
-
-            if (genresOfFilms.get(film.getId()).isEmpty()) {
-                film.setGenres(new Genre[0]);
-                continue;
-            }
-
-            film.setGenres(genresOfFilms.get(film.getId()).toArray(new Genre[0]));
-        }
-
-
+    public List<Film> getPopularFilms(int count) {
+        List<Film> films = filmDao.getPopularFilms(count);
+        updateFilmData(films);
         return films;
     }
 
@@ -140,19 +129,26 @@ public class FilmService {
         filmDao.removeLike(filmId, userId);
     }
 
-    public List<Film> getPopularFilms(int count) {
-        List<Film> films = filmDao.getPopularFilms(count);
-
-        for (Film film : films) {
-            film.setGenres(genreService.getGenresByFilmId(film.getId()).toArray(new Genre[0]));
-            film.setMpa(mpaService.getMpaByFilmId(film.getId()));
-
-        }
-
-        return films;
-    }
-
     public boolean filmDoesNotExist(Long id) {
         return filmDao.filmDoesNotExist(id);
+    }
+
+    private void updateFilmData(List<Film> films) {
+        Map<Long, List<Genre>> genresOfFilms = genreService.getGenresOfFilms();
+        List<Mpa> mpas = mpaService.getAllMpas();
+
+        for (Film film : films) {
+            film.setMpa(mpas.stream()
+                    .filter(mpa -> mpa.getId() == film.getMpa().getId())
+                    .findFirst()
+                    .get());
+
+            if (genresOfFilms.get(film.getId()).isEmpty()) {
+                film.setGenres(new Genre[0]);
+                continue;
+            }
+
+            film.setGenres(genresOfFilms.get(film.getId()).toArray(new Genre[0]));
+        }
     }
 }
