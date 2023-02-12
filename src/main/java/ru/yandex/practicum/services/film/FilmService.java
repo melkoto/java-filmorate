@@ -8,11 +8,13 @@ import ru.yandex.practicum.exceptions.BadRequestException;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.models.Genre;
+import ru.yandex.practicum.models.Mpa;
 import ru.yandex.practicum.services.genre.GenreService;
 import ru.yandex.practicum.services.mpa.MpaService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -49,6 +51,8 @@ public class FilmService {
                 genre.setName(name);
                 batchArgs.add(genre.getId());
             }
+        } else {
+            film.setGenres(new Genre[0]);
         }
 
         filmDao.insertFilmGenres(filmId, batchArgs);
@@ -58,12 +62,23 @@ public class FilmService {
 
     public List<Film> getFilms() {
         List<Film> films = filmDao.getFilms();
+        Map<Long, List<Genre>> genresOfFilms = genreService.getGenresOfFilms();
+        List<Mpa> mpas = mpaService.getAllMpas();
 
         for (Film film : films) {
-            film.setGenres(genreService.getGenresByFilmId(film.getId()).toArray(new Genre[0]));
-            film.setMpa(mpaService.getMpaByFilmId(film.getId()));
+            film.setMpa(mpas.stream()
+                    .filter(mpa -> mpa.getId() == film.getMpa().getId())
+                    .findFirst()
+                    .get());
 
+            if (genresOfFilms.get(film.getId()).isEmpty()) {
+                film.setGenres(new Genre[0]);
+                continue;
+            }
+
+            film.setGenres(genresOfFilms.get(film.getId()).toArray(new Genre[0]));
         }
+
 
         return films;
     }
@@ -76,7 +91,6 @@ public class FilmService {
         }
 
         film.setGenres(genreService.getUniqueGenresByFilmId(id).toArray(new Genre[0]));
-        film.setMpa(mpaService.getMpaByFilmId(id));
 
         return film;
     }

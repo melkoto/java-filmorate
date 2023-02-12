@@ -1,6 +1,5 @@
 package ru.yandex.practicum.dao.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.FilmDao;
 import ru.yandex.practicum.models.Film;
 import ru.yandex.practicum.models.Genre;
+import ru.yandex.practicum.models.Mpa;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Slf4j
 @Component
 public class FilmDaoImpl implements FilmDao {
     private final JdbcTemplate jdbcTemplate;
@@ -56,7 +55,7 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public Film getFilmById(Long id) {
-        String sql = "SELECT * FROM films WHERE id = ?";
+        String sql = "SELECT * FROM films LEFT JOIN (SELECT NAME AS MNAME, ID AS MID FROM MPAS) ON FILMS.MPA_ID = MID WHERE FILMS.id = ?";
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
 
@@ -65,11 +64,15 @@ public class FilmDaoImpl implements FilmDao {
         }
 
         Film film = new Film();
+        Mpa mpa = new Mpa();
         film.setId(rowSet.getLong("id"));
         film.setName(rowSet.getString("name"));
         film.setDescription(rowSet.getString("description"));
         film.setReleaseDate(Objects.requireNonNull(rowSet.getDate("release_date")).toLocalDate());
         film.setDuration(rowSet.getInt("duration"));
+        mpa.setId(rowSet.getInt("MID"));
+        mpa.setName(rowSet.getString("MNAME"));
+        film.setMpa(mpa);
 
         return film;
     }
@@ -162,6 +165,11 @@ public class FilmDaoImpl implements FilmDao {
         film.setDescription(rs.getString("description"));
         film.setReleaseDate(rs.getDate("release_date").toLocalDate());
         film.setDuration(rs.getInt("duration"));
+
+        Mpa mpa = new Mpa();
+        mpa.setId(rs.getInt("mpa_id"));
+
+        film.setMpa(mpa);
         return film;
     }
 }

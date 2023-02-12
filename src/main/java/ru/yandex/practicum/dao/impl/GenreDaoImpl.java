@@ -6,9 +6,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.dao.GenreDao;
 import ru.yandex.practicum.models.Genre;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class GenreDaoImpl implements GenreDao {
@@ -62,5 +60,40 @@ public class GenreDaoImpl implements GenreDao {
         }
 
         return genres;
+    }
+
+    @Override
+    public Map<Long, List<Genre>> getGenresOfFilms() {
+        String sql = "SELECT f.id, fg.GENRE_ID, g.name FROM FILMS as f " +
+                "LEFT JOIN FILMS_GENRES as fg ON f.ID = fg.FILM_ID " +
+                "LEFT JOIN GENRES g on fg.GENRE_ID = g.ID " +
+                "ORDER BY f.id, fg.GENRE_ID";
+
+        Map<Long, List<Genre>> filmGenres = new HashMap<>();
+        SqlRowSet rs = jdbcTemplate.queryForRowSet(sql);
+
+        while (rs.next()) {
+            Genre genre = new Genre();
+            genre.setId(rs.getInt("genre_id"));
+            genre.setName(rs.getString("name"));
+
+            Long filmId = rs.getLong("id");
+
+            if (filmGenres.containsKey(filmId)) {
+                if (genre.getId() != 0) {
+                    filmGenres.get(filmId).add(genre);
+                }
+            } else {
+                List<Genre> list = new java.util.ArrayList<>();
+
+                if (genre.getId() != 0) {
+                    list.add(genre);
+                }
+
+                filmGenres.put(filmId, list);
+            }
+        }
+
+        return filmGenres;
     }
 }

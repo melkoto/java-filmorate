@@ -7,6 +7,7 @@ import ru.yandex.practicum.models.Genre;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -30,6 +31,11 @@ public class GenreService {
     public List<Genre> getGenres() {
         return genreDao.getGenres();
     }
+
+    public Map<Long, List<Genre>> getGenresOfFilms() {
+        return genreDao.getGenresOfFilms();
+    }
+
 
     public Set<Genre> getGenresByFilmId(Long filmId) {
         return genreDao.getGenresByFilmId(filmId);
