@@ -21,11 +21,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public List<User> getUsers() {
-        return userService.getUsers();
-    }
-
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
         if (user.getLogin().split(" ").length > 1) {
@@ -33,6 +28,16 @@ public class UserController {
         }
 
         return userService.addUser(user);
+    }
+
+    @GetMapping
+    public List<User> getUsers() {
+        return userService.getUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable long id) {
+        return userService.getUserById(id);
     }
 
     @PutMapping
@@ -46,24 +51,28 @@ public class UserController {
         return userService.updateUser(user);
     }
 
-    @GetMapping("/{id}")
-    public User getUser(@PathVariable long id) {
-        return userService.getUserById(id);
+    @DeleteMapping("/{id}")
+    public User deleteUser(@PathVariable long id) {
+        return userService.deleteUser(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
-        userService.addFriend(id, friendId);
+    public String addFriend(@PathVariable long id, @PathVariable long friendId) {
+        return userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void removeFriend(@PathVariable long id, @PathVariable long friendId) {
-        userService.removeFriend(id, friendId);
+    public String removeFriend(@PathVariable long id, @PathVariable long friendId) {
+        return userService.removeFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable long id) {
         return userService.getFriends(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}/{status}")
+    public void acceptFriend(@PathVariable long id, @PathVariable long friendId, @PathVariable String status) {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")

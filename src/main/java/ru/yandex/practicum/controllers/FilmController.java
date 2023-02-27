@@ -1,6 +1,5 @@
 package ru.yandex.practicum.controllers;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.exceptions.BadRequestException;
@@ -12,7 +11,6 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("films")
 public class FilmController {
@@ -21,11 +19,6 @@ public class FilmController {
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
-    }
-
-    @GetMapping
-    public List<Film> getFilms() {
-        return filmService.getFilms();
     }
 
     @PostMapping
@@ -39,6 +32,16 @@ public class FilmController {
         return filmService.addFilm(film);
     }
 
+    @GetMapping
+    public List<Film> getFilms() {
+        return filmService.getFilms();
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable long id) {
+        return filmService.getFilmById(id);
+    }
+
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
         LocalDate releaseDate = LocalDate.parse(String.valueOf(film.getReleaseDate()));
@@ -50,9 +53,9 @@ public class FilmController {
         return filmService.updateFilm(film);
     }
 
-    @GetMapping("/{id}")
-    public Film getFilm(@PathVariable long id) {
-        return filmService.getFilmById(id);
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable long id) {
+        filmService.deleteFilm(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -61,8 +64,8 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void dislikeFilm(@PathVariable long id, @PathVariable long userId) {
-        filmService.removeLikes(id, userId);
+    public void removeLike(@PathVariable long id, @PathVariable long userId) {
+        filmService.removeLike(id, userId);
     }
 
     @GetMapping("/popular")
